@@ -23,7 +23,7 @@ public class RenterRepositoryTests {
     @Test
     void shouldFindRenterById() {
         // Given
-        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 14, 0, 0));
+        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 14, 0, 0), null);
         Renter savedRenter = renterRepository.save(renter);
         Long savedRenterId = savedRenter.getId();
         // When
@@ -43,7 +43,7 @@ public class RenterRepositoryTests {
     @Test
     void shouldCheckThatRenterExistsByEmail() {
         // Given
-        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 14, 0, 0));
+        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 14, 0, 0), null);
         renterRepository.save(renter);
         // When
         boolean result = renterRepository.existsByEmail("bubuslaw@test.pl");
@@ -55,7 +55,7 @@ public class RenterRepositoryTests {
     @Test
     void shouldSaveRenter() {
         // Given
-        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 14, 0, 0));
+        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 14, 0, 0), null);
         // When
         Renter savedRenter = renterRepository.save(renter);
         // Then
@@ -72,8 +72,8 @@ public class RenterRepositoryTests {
     @Test
     void shouldFindAllRenters() {
         // Given
-        Renter renter1 = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 14, 0, 0));
-        Renter renter2 = new Renter(1L, "Bubuslaw2", "Bubuslawski2", "bubuslaw2@test.pl", "000000002", "Bubuslawska 2", LocalDateTime.of(2024, 9, 24, 14, 0, 0));
+        Renter renter1 = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 14, 0, 0), null);
+        Renter renter2 = new Renter(1L, "Bubuslaw2", "Bubuslawski2", "bubuslaw2@test.pl", "000000002", "Bubuslawska 2", LocalDateTime.of(2024, 9, 24, 14, 0, 0), null);
         renterRepository.save(renter1);
         renterRepository.save(renter2);
         // When

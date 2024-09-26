@@ -1,7 +1,7 @@
 package com.kodilla.outdoor.equiprent.mapper;
 
 import com.kodilla.outdoor.equiprent.domain.Renter;
-import com.kodilla.outdoor.equiprent.dto.CreateRenterDto;
+import com.kodilla.outdoor.equiprent.dto.CreateUpdateRenterDto;
 import com.kodilla.outdoor.equiprent.dto.RenterDto;
 import org.springframework.stereotype.Component;
 
@@ -20,14 +20,14 @@ public class RenterMapper {
                 .build();
     }
 
-    public Renter mapCreateRenterDtoToRenter(CreateRenterDto createRenterDto) {
+    public Renter mapCreateUpdateRenterDtoToRenter(CreateUpdateRenterDto createUpdateRenterDto) {
         return Renter.builder()
                 .id(null)
-                .firstName(createRenterDto.getFirstName())
-                .lastName(createRenterDto.getLastName())
-                .email(createRenterDto.getEmail())
-                .phoneNumber(createRenterDto.getPhoneNumber())
-                .address(createRenterDto.getAddress())
+                .firstName(createUpdateRenterDto.getFirstName())
+                .lastName(createUpdateRenterDto.getLastName())
+                .email(createUpdateRenterDto.getEmail())
+                .phoneNumber(createUpdateRenterDto.getPhoneNumber())
+                .address(createUpdateRenterDto.getAddress())
                 .creationDate(null)
                 .build();
     }

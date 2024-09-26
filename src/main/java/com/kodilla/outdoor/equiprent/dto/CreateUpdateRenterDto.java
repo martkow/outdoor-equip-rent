@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class CreateRenterDto {
+public class CreateUpdateRenterDto {
     @Schema(description = "First name of the renter", example = "Bubuslaw", required = true)
     private String firstName;
     @Schema(description = "Last name of the renter", example = "Bubuslawski", required = true)

@@ -31,10 +31,10 @@ public class RentalRepositoryTests {
         Equipment equipment = new Equipment(null, "Tent Plus", "Camping tent", EquipmentCategory.TENT, null, null, LocalDateTime.now());
         equipmentRepository.save(equipment);
 
-        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.now());
+        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.now(), null);
         renterRepository.save(renter);
 
-        Rental rental = new Rental(null, equipment, renter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now());
+        Rental rental = new Rental(null, equipment, renter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
         // When
         Rental savedRental = rentalRepository.save(rental);
         // Then
@@ -55,10 +55,10 @@ public class RentalRepositoryTests {
 
         Equipment savedEquipment = equipmentRepository.save(equipment);
 
-        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 14, 0, 0));
+        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 14, 0, 0), null);
         Renter savedRenter = renterRepository.save(renter);
 
-        Rental rental = new Rental(null, savedEquipment, savedRenter, LocalDateTime.of(2024, 9, 24, 12, 0, 0), LocalDateTime.of(2024, 9, 24, 14, 0, 0), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.of(2024, 9, 24, 13, 0, 0));
+        Rental rental = new Rental(null, savedEquipment, savedRenter, LocalDateTime.of(2024, 9, 24, 12, 0, 0), LocalDateTime.of(2024, 9, 24, 14, 0, 0), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.of(2024, 9, 24, 13, 0, 0), null);
         rentalRepository.save(rental);
         // When
         boolean result = rentalRepository.existsRentalByEquipmentAndStatus(equipment, RentalStatus.ACTIVE);
@@ -73,10 +73,10 @@ public class RentalRepositoryTests {
         Equipment equipment = new Equipment(null, "Tent Plus", "Camping tent", EquipmentCategory.TENT, null, null, LocalDateTime.now());
         equipmentRepository.save(equipment);
 
-        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.now());
+        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.now(), null);
         Renter savedRenter = renterRepository.save(renter);
 
-        Rental rental = new Rental(null, equipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now());
+        Rental rental = new Rental(null, equipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
         rentalRepository.save(rental);
         // When
         List<Rental> rentals = rentalRepository.findAll();
@@ -92,11 +92,11 @@ public class RentalRepositoryTests {
         Equipment equipment = new Equipment(null, "Tent Plus", "Camping tent", EquipmentCategory.TENT, null, null, LocalDateTime.now());
         equipmentRepository.save(equipment);
 
-        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.now());
+        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.now(), null);
         Renter savedRenter = renterRepository.save(renter);
 
-        Rental rentalActive = new Rental(null, equipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now());
-        Rental rentalCompleted = new Rental(null, equipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(3), null, RentalStatus.COMPLETED, new BigDecimal("15.00"), LocalDateTime.now());
+        Rental rentalActive = new Rental(null, equipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
+        Rental rentalCompleted = new Rental(null, equipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(3), null, RentalStatus.COMPLETED, new BigDecimal("15.00"), LocalDateTime.now(), null);
 
         rentalRepository.save(rentalActive);
         rentalRepository.save(rentalCompleted);
@@ -116,10 +116,10 @@ public class RentalRepositoryTests {
         Equipment equipment = new Equipment(null, "Tent Plus", "Camping tent", EquipmentCategory.TENT, null, null, LocalDateTime.now());
         equipmentRepository.save(equipment);
 
-        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.now());
+        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.now(), null);
         Renter savedRenter = renterRepository.save(renter);
 
-        Rental rental = new Rental(null, equipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now());
+        Rental rental = new Rental(null, equipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
         Rental savedRental = rentalRepository.save(rental);
         // When
         Optional<Rental> foundRental = rentalRepository.findById(savedRental.getId());
@@ -135,10 +135,10 @@ public class RentalRepositoryTests {
         Equipment equipment = new Equipment(null, "Tent Plus", "Camping tent", EquipmentCategory.TENT, null, null, LocalDateTime.now());
         equipmentRepository.save(equipment);
 
-        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.now());
+        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.now(), null);
         Renter savedRenter = renterRepository.save(renter);
 
-        Rental rental = new Rental(null, equipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now());
+        Rental rental = new Rental(null, equipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
 
         rentalRepository.save(rental);
         // When
@@ -155,10 +155,10 @@ public class RentalRepositoryTests {
         Equipment equipment = new Equipment(null, "Tent Plus", "Camping tent", EquipmentCategory.TENT, null, null, LocalDateTime.now());
         Equipment savedEquipment = equipmentRepository.save(equipment);
 
-        Renter renter = new Renter(null, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.now());
+        Renter renter = new Renter(null, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.now(), null);
         Renter savedRenter = renterRepository.save(renter);
 
-        Rental rental = new Rental(null, savedEquipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now());
+        Rental rental = new Rental(null, savedEquipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
         Rental savedRental = rentalRepository.save(rental);
         Long savedRentalId = savedRental.getId();
         // When
@@ -175,10 +175,10 @@ public class RentalRepositoryTests {
         Equipment equipment = new Equipment(null, "Tent Plus", "Camping tent", EquipmentCategory.TENT, null, null, LocalDateTime.now());
         Equipment savedEquipment = equipmentRepository.save(equipment);
 
-        Renter renter = new Renter(null, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.now());
+        Renter renter = new Renter(null, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.now(), null);
         Renter savedRenter = renterRepository.save(renter);
 
-        Rental rental = new Rental(null, savedEquipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now());
+        Rental rental = new Rental(null, savedEquipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
         Rental savedRental = rentalRepository.save(rental);
         Long savedRentalId = savedRental.getId();
         // When

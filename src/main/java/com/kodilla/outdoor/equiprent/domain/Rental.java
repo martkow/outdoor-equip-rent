@@ -35,4 +35,6 @@ public class Rental {
     private BigDecimal totalPrice;
     @Column(name = "CREATION_DATE", nullable = false)
     private LocalDateTime creationDate;
+    @Column(name = "MODIFICATION_DATE")
+    private LocalDateTime modificationDate;
 }

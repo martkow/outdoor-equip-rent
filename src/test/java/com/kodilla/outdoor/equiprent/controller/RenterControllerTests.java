@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.kodilla.outdoor.equiprent.controller.exception.RenterAlreadyExistsException;
 import com.kodilla.outdoor.equiprent.controller.exception.RenterNotFoundException;
 import com.kodilla.outdoor.equiprent.domain.Renter;
-import com.kodilla.outdoor.equiprent.dto.CreateRenterDto;
+import com.kodilla.outdoor.equiprent.dto.CreateUpdateRenterDto;
 import com.kodilla.outdoor.equiprent.dto.RentalDto;
 import com.kodilla.outdoor.equiprent.dto.RenterDto;
 import com.kodilla.outdoor.equiprent.mapper.RentalMapper;
@@ -47,16 +47,16 @@ public class RenterControllerTests {
     @DisplayName("Test for creating a new renter")
     void shouldCreateRenter() throws Exception {
         // Given
-        CreateRenterDto createRenterDto = new CreateRenterDto("Bubuslaw", "Bubuslawski", "bubuslaw@bubuslawski.com", "123456789", "Bubuslawska 1");
+        CreateUpdateRenterDto createUpdateRenterDto = new CreateUpdateRenterDto("Bubuslaw", "Bubuslawski", "bubuslaw@bubuslawski.com", "123456789", "Bubuslawska 1");
         RenterDto renterDto = new RenterDto(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@bubuslawski.com", "123456789", "Bubuslawska 1");
-        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@bubuslawski.com", "123456789", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 17, 0, 0));
+        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@bubuslawski.com", "123456789", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 17, 0, 0), null);
 
-        Mockito.when(renterMapper.mapCreateRenterDtoToRenter(createRenterDto)).thenReturn(renter);
+        Mockito.when(renterMapper.mapCreateUpdateRenterDtoToRenter(createUpdateRenterDto)).thenReturn(renter);
         Mockito.when(renterService.createRenter(Mockito.any())).thenReturn(renter);
         Mockito.when(renterMapper.mapRenterToRenterDto(Mockito.any())).thenReturn(renterDto);
 
         Gson gson = new Gson();
-        String jsonContent = gson.toJson(createRenterDto);
+        String jsonContent = gson.toJson(createUpdateRenterDto);
         // When & Then
         mockMvc.perform(MockMvcRequestBuilders.post("/api/renters")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -76,12 +76,12 @@ public class RenterControllerTests {
     @DisplayName("Test case for RenterAlreadyExistsException when creating renter with already existing email")
     void shouldHandleRenterAlreadyExistsException() throws Exception {
         // Given
-        CreateRenterDto createRenterDto = new CreateRenterDto("Bubuslaw", "Bubuslawski", "bubuslaw@bubuslawski.com", "123456789", "Bubuslawska 1");
+        CreateUpdateRenterDto createUpdateRenterDto = new CreateUpdateRenterDto("Bubuslaw", "Bubuslawski", "bubuslaw@bubuslawski.com", "123456789", "Bubuslawska 1");
 
         Mockito.when(renterService.createRenter(Mockito.any())).thenThrow(new RenterAlreadyExistsException("bubuslaw@bubuslawski.com"));
 
         Gson gson = new Gson();
-        String jsonContent = gson.toJson(createRenterDto);
+        String jsonContent = gson.toJson(createUpdateRenterDto);
         // When & Then
         mockMvc.perform(MockMvcRequestBuilders.post("/api/renters")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -95,11 +95,57 @@ public class RenterControllerTests {
     }
 
     @Test
+    @DisplayName("Test for updating an existing renter")
+    void shouldUpdateRenter() throws Exception {
+        // Given
+        Long renterId = 1L;
+        CreateUpdateRenterDto updateRenterDto = new CreateUpdateRenterDto("Bubuslaw", "Bubuslawski", "updated@bubuslawski.com", "987654321", "Updated Address 1");
+        Renter renter = new Renter(null, "Bubuslaw", "Bubuslawski", "updated@bubuslawski.com", "987654321", "Updated Address 1", null, null);
+
+        Mockito.when(renterMapper.mapCreateUpdateRenterDtoToRenter(updateRenterDto)).thenReturn(renter);
+        Mockito.doNothing().when(renterService).updateRenter(renterId, renter);
+
+        Gson gson = new Gson();
+        String jsonContent = gson.toJson(updateRenterDto);
+        // When & Then
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/renters/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+                        .content(jsonContent)
+                )
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
+
+    @Test
+    @DisplayName("Test case for RenterNotFoundException when updating non-existing renter")
+    void shouldHandleRenterNotFoundExceptionWhenUpdating() throws Exception {
+        // Given
+        Long renterId = 1L;
+        CreateUpdateRenterDto updateRenterDto = new CreateUpdateRenterDto("Bubuslaw", "Bubuslawski", "updated@bubuslawski.com", "987654321", "Updated Address 1");
+
+        Mockito.doThrow(new RenterNotFoundException(renterId)).when(renterService).updateRenter(Mockito.eq(renterId), Mockito.any());
+
+        Gson gson = new Gson();
+        String jsonContent = gson.toJson(updateRenterDto);
+        // When & Then
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/renters/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+                        .content(jsonContent)
+                )
+                .andExpect(MockMvcResultMatchers.status().isBadRequest()) // 400 status code for bad request
+                .andExpect(MockMvcResultMatchers.jsonPath("$.level", Matchers.is("ERROR")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is("renter.does.not.exist")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.description", Matchers.is("Renter with ID " + renterId + " not found.")));
+    }
+
+
+    @Test
     @DisplayName("Test for retrieving all renters")
     void shouldGetAllRenters() throws Exception {
         // Given
         RenterDto renterDto = new RenterDto(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@bubuslawski.com", "123456789", "Bubuslawska 1");
-        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@bubuslawski.com", "123456789", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 17, 0, 0));
+        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@bubuslawski.com", "123456789", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 17, 0, 0), null);
 
         Mockito.when(renterMapper.mapRenterListToRenterDtoList(Mockito.anyList())).thenReturn(List.of(renterDto));
         Mockito.when(renterService.getAllRenters()).thenReturn(List.of(renter));
@@ -122,7 +168,7 @@ public class RenterControllerTests {
         // Given
         Long renterId = 1L;
         RenterDto renterDto = new RenterDto(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@bubuslawski.com", "123456789", "Bubuslawska 1");
-        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@bubuslawski.com", "123456789", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 17, 0, 0));
+        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@bubuslawski.com", "123456789", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 17, 0, 0), null);
 
         Mockito.when(renterService.getRenter(renterId)).thenReturn(renter);
         Mockito.when(renterMapper.mapRenterToRenterDto(Mockito.any())).thenReturn(renterDto);

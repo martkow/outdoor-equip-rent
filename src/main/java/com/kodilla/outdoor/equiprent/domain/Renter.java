@@ -28,4 +28,6 @@ public class Renter {
     private String address;
     @Column(name = "CREATION_DATE", nullable = false)
     private LocalDateTime creationDate;
+    @Column(name = "MODIFICATION_DATE")
+    private LocalDateTime modificationDate;
 }

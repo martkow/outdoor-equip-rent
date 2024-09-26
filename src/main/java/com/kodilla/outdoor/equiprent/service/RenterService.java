@@ -32,4 +32,17 @@ public class RenterService {
     public Renter getRenter(Long renterId) throws RenterNotFoundException {
         return renterRepository.findById(renterId).orElseThrow(() -> new RenterNotFoundException(renterId));
     }
+
+    public void updateRenter(Long renterId, Renter renter) throws RenterNotFoundException {
+        Renter retrievedRenter = renterRepository.findById(renterId).orElseThrow(() -> new RenterNotFoundException(renterId));
+
+        retrievedRenter.setFirstName(renter.getFirstName());
+        retrievedRenter.setLastName(renter.getLastName());
+        retrievedRenter.setEmail(renter.getEmail());
+        retrievedRenter.setPhoneNumber(renter.getPhoneNumber());
+        retrievedRenter.setAddress(renter.getAddress());
+        retrievedRenter.setModificationDate(LocalDateTime.now());
+
+        renterRepository.save(retrievedRenter);
+    }
 }

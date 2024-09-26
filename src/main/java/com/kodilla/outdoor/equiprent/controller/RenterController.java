@@ -3,7 +3,7 @@ package com.kodilla.outdoor.equiprent.controller;
 import com.kodilla.outdoor.equiprent.controller.exception.GlobalHttpErrorHandler;
 import com.kodilla.outdoor.equiprent.controller.exception.RenterAlreadyExistsException;
 import com.kodilla.outdoor.equiprent.controller.exception.RenterNotFoundException;
-import com.kodilla.outdoor.equiprent.dto.CreateRenterDto;
+import com.kodilla.outdoor.equiprent.dto.CreateUpdateRenterDto;
 import com.kodilla.outdoor.equiprent.dto.RentalDto;
 import com.kodilla.outdoor.equiprent.dto.RenterDto;
 import com.kodilla.outdoor.equiprent.mapper.RentalMapper;
@@ -53,9 +53,39 @@ public class RenterController {
     })
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<RenterDto> createRenter(@RequestBody CreateRenterDto createRenterDto) throws RenterAlreadyExistsException {
-        return ResponseEntity.status(HttpStatus.CREATED).body(renterMapper.mapRenterToRenterDto(renterService.createRenter(renterMapper.mapCreateRenterDtoToRenter(createRenterDto))));
+    public ResponseEntity<RenterDto> createRenter(@RequestBody CreateUpdateRenterDto createUpdateRenterDto) throws RenterAlreadyExistsException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(renterMapper.mapRenterToRenterDto(renterService.createRenter(renterMapper.mapCreateUpdateRenterDtoToRenter(createUpdateRenterDto))));
     }
+
+    @Operation(
+            summary = "Update an existing renter",
+            description = "Updates an existing renter's details by renter ID"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204",
+                    description = "Renter updated successfully",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = RenterDto.class)
+                    )),
+            @ApiResponse(responseCode = "400",
+                    description = "Renter with ID {renterId} not found.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = GlobalHttpErrorHandler.Error.class)
+                    ))
+    })
+    @PutMapping(value = "/{renterId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseEntity<Void> updateRenter(
+            @Parameter(description = "ID of the renter to update", example = "1")
+            @PathVariable Long renterId,
+            @RequestBody CreateUpdateRenterDto createUpdateRenterDto) throws RenterNotFoundException {
+        renterService.updateRenter(renterId, renterMapper.mapCreateUpdateRenterDtoToRenter(createUpdateRenterDto));
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
 
     @Operation(
             description = "Retrieves all renters",

@@ -23,7 +23,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @DisplayName("Tests for EquipmentRentController class")
@@ -43,10 +42,10 @@ public class EquipmentRentControllerTests {
     @Test
     void shouldCreateRental() throws Exception {
         // Given
-        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 14, 0, 0));
+        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 14, 0, 0), null);
         CreateRentalDto createRentalDto = new CreateRentalDto(1L, 1L, 2L, 3);
         Equipment equipment = new Equipment(1L, "Tent Plus", "Camping tent", EquipmentCategory.TENT, null, null, LocalDateTime.of(2024, 9, 24, 13, 0, 0));
-        Rental rental = new Rental(1L, equipment, renter, LocalDateTime.of(2024, 9, 21, 12, 0, 0), LocalDateTime.of(2024, 9, 21, 15, 0, 0), null, RentalStatus.ACTIVE, new BigDecimal("211.11"), LocalDateTime.of(2024, 9, 21, 12, 0, 0));
+        Rental rental = new Rental(1L, equipment, renter, LocalDateTime.of(2024, 9, 21, 12, 0, 0), LocalDateTime.of(2024, 9, 21, 15, 0, 0), null, RentalStatus.ACTIVE, new BigDecimal("211.11"), LocalDateTime.of(2024, 9, 21, 12, 0, 0), null);
         RentalDto rentalDto = new RentalDto(1L, 1L, 1L, "2023-09-21T12:00:00", "2023-09-21T15:00:00", "ACTIVE", new BigDecimal("211.11"));
 
         Mockito.when(rentalService.createRental(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(rental);
@@ -162,9 +161,9 @@ public class EquipmentRentControllerTests {
     @Test
     void shouldFetchAllRentals() throws Exception {
         // Given
-        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 14, 0, 0));
+        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 14, 0, 0), null);
         Equipment equipment = new Equipment(1L, "Tent Plus", "Camping tent", EquipmentCategory.TENT, null, null, LocalDateTime.of(2024, 9, 21, 15, 0, 0));
-        Rental rental = new Rental(1L, equipment, renter, LocalDateTime.of(2024, 9, 21, 12, 0, 0), LocalDateTime.of(2024, 9, 21, 15, 0, 0), null, RentalStatus.ACTIVE, new BigDecimal("211.11"), LocalDateTime.of(2024, 9, 21, 15, 0, 0));
+        Rental rental = new Rental(1L, equipment, renter, LocalDateTime.of(2024, 9, 21, 12, 0, 0), LocalDateTime.of(2024, 9, 21, 15, 0, 0), null, RentalStatus.ACTIVE, new BigDecimal("211.11"), LocalDateTime.of(2024, 9, 21, 15, 0, 0), null);
         RentalDto rentalDto = new RentalDto(1L, 1L, 1L, "2023-09-21T12:00:00", "2023-09-21T15:00:00", "ACTIVE", new BigDecimal("211.11"));
 
         Mockito.when(rentalService.getRentalByStatuses(List.of())).thenReturn(List.of(rental));
@@ -187,10 +186,10 @@ public class EquipmentRentControllerTests {
     @Test
     void shouldFetchRentalsByStatus() throws Exception {
         // Given
-        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 14, 0, 0));
+        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 14, 0, 0), null);
         RentalDto rentalDto = new RentalDto(1L, 1L, 1L, "2023-09-21T12:00:00", "2023-09-21T15:00:00", "ACTIVE", new BigDecimal("211.11"));
         Equipment equipment = new Equipment(1L, "Tent Plus", "Camping tent", EquipmentCategory.TENT, null, null, LocalDateTime.of(2024, 9, 21, 15, 0, 0));
-        Rental rental = new Rental(1L, equipment, renter, LocalDateTime.of(2024, 9, 21, 12, 0, 0), LocalDateTime.of(2024, 9, 21, 15, 0, 0), null, RentalStatus.ACTIVE, new BigDecimal("211.11"), LocalDateTime.of(2024, 9, 21, 15, 0, 0));
+        Rental rental = new Rental(1L, equipment, renter, LocalDateTime.of(2024, 9, 21, 12, 0, 0), LocalDateTime.of(2024, 9, 21, 15, 0, 0), null, RentalStatus.ACTIVE, new BigDecimal("211.11"), LocalDateTime.of(2024, 9, 21, 15, 0, 0), null);
 
         Mockito.when(filterMapper.mapStringToRentalStatusList(Mockito.any())).thenReturn(List.of(RentalStatus.ACTIVE));
         Mockito.when(rentalService.getRentalByStatuses(Mockito.anyList())).thenReturn(List.of(rental));
@@ -226,10 +225,10 @@ public class EquipmentRentControllerTests {
     @Test
     void shouldUpdateRentalStatusToCompleted() throws Exception {
         // Given
-        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 14, 0, 0));
+        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 14, 0, 0), null);
         RentalDto rentalDto = new RentalDto(1L, 1L, 1L, "2023-09-21T12:00:00", "2023-09-21T15:00:00", "COMPLETED", new BigDecimal("211.11"));
         Equipment equipment = new Equipment(1L, "Tent Plus", "Camping tent", EquipmentCategory.TENT, null, null, LocalDateTime.of(2024, 9, 21, 15, 0, 0));
-        Rental rental = new Rental(1L, equipment, renter, LocalDateTime.of(2024, 9, 21, 12, 0, 0), LocalDateTime.of(2024, 9, 21, 15, 0, 0), null, RentalStatus.COMPLETED, new BigDecimal("211.11"), LocalDateTime.of(2024, 9, 21, 15, 0, 0));
+        Rental rental = new Rental(1L, equipment, renter, LocalDateTime.of(2024, 9, 21, 12, 0, 0), LocalDateTime.of(2024, 9, 21, 15, 0, 0), null, RentalStatus.COMPLETED, new BigDecimal("211.11"), LocalDateTime.of(2024, 9, 21, 15, 0, 0), LocalDateTime.of(2024, 9, 21, 16, 0, 0));
 
         Mockito.when(rentalService.updateRentalStatus(1L, RentalStatus.COMPLETED)).thenReturn(rental);
         Mockito.when(rentalMapper.mapRentalToRentalDto(Mockito.any())).thenReturn(rentalDto);

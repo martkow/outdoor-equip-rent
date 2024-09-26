@@ -87,6 +87,7 @@ public class RentalService {
         if (!rentalStatus.equals(RentalStatus.ACTIVE)) {
             rental.setStatus(rentalStatus);
             rental.getEquipment().getEquipmentAvailability().setCurrentQuantity(rental.getEquipment().getEquipmentAvailability().getCurrentQuantity() + 1);
+            rental.setModificationDate(LocalDateTime.now());
         }
 
         return rentalRepository.save(rental);
