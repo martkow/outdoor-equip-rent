@@ -1,0 +1,91 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > CreateEquipmentDto</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.kodilla.outdoor.equiprent.dto</a>
+</div>
+
+<h1>Coverage Summary for Class: CreateEquipmentDto (com.kodilla.outdoor.equiprent.dto)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">CreateEquipmentDto</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.kodilla.outdoor.equiprent.dto;
+&nbsp;
+&nbsp;import com.fasterxml.jackson.annotation.JsonProperty;
+&nbsp;import io.swagger.v3.oas.annotations.media.Schema;
+&nbsp;import jakarta.persistence.Column;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import lombok.Getter;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@AllArgsConstructor
+&nbsp;@Getter
+&nbsp;public class CreateEquipmentDto {
+&nbsp;    @Schema(description = &quot;Name of the equipment&quot;, example = &quot;Tent plus&quot;)
+&nbsp;    private String name;
+&nbsp;    @Schema(description = &quot;Description of the equipment&quot;, example = &quot;A spacious tent for 4 people&quot;)
+&nbsp;    private String description;
+&nbsp;    @Schema(description = &quot;Current quantity of the equipment available&quot;, example = &quot;8&quot;)
+&nbsp;    @JsonProperty(&quot;availableQuantity&quot;)
+&nbsp;    private Long currentQuantity;
+&nbsp;    @Schema(description = &quot;List of prices for the equipment at different time intervals&quot;)
+&nbsp;    private List&lt;CreateEquipmentPriceDto&gt; prices;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-09-26 17:39</div>
+</div>
+</body>
+</html>

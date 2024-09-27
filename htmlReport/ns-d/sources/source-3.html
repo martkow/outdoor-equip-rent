@@ -1,0 +1,86 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > CreateRentalDto</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.kodilla.outdoor.equiprent.dto</a>
+</div>
+
+<h1>Coverage Summary for Class: CreateRentalDto (com.kodilla.outdoor.equiprent.dto)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">CreateRentalDto</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.kodilla.outdoor.equiprent.dto;
+&nbsp;
+&nbsp;import io.swagger.v3.oas.annotations.media.Schema;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import lombok.Getter;
+&nbsp;
+&nbsp;@AllArgsConstructor
+&nbsp;@Getter
+&nbsp;public class CreateRentalDto {
+&nbsp;    @Schema(description = &quot;ID of the equipment being rented&quot;, example = &quot;1&quot;, required = true)
+&nbsp;    private Long equipmentId;
+&nbsp;    @Schema(description = &quot;ID of the person renting the equipment&quot;, example = &quot;1&quot;, required = true)
+&nbsp;    private Long renterId;
+&nbsp;    @Schema(description = &quot;Rental tier id for the equipment&quot;, example = &quot;1&quot;, required = true)
+&nbsp;    private Long rentalTierId;
+&nbsp;    @Schema(description = &quot;Number of rental tier units&quot;, example = &quot;3&quot;, required = true)
+&nbsp;    private Integer rentalTierQuantity;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-09-26 17:39</div>
+</div>
+</body>
+</html>

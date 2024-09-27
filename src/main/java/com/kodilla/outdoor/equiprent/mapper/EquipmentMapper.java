@@ -75,7 +75,7 @@ public class EquipmentMapper {
                 .category(equipmentCategory)
                 .equipmentAvailability(null)
                 .prices(new ArrayList<>())
-                .creationDate(LocalDateTime.now())
+                .creationDate(LocalDateTime.now()) // na poziomie serwisu ustawiac
                 .build();
 
         equipment.setPrices(mapCreateEquipmentPriceDtoListToEquipmentPriceList(equipment, createEquipmentDto.getPrices()));

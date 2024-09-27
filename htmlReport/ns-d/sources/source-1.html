@@ -1,0 +1,250 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > WeatherMapDto</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.kodilla.outdoor.equiprent.dto</a>
+</div>
+
+<h1>Coverage Summary for Class: WeatherMapDto (com.kodilla.outdoor.equiprent.dto)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">WeatherMapDto$CityDto</td>
+  </tr>
+  <tr>
+    <td class="name">WeatherMapDto$CloudsDto</td>
+  </tr>
+  <tr>
+    <td class="name">WeatherMapDto$CoordinatesDto</td>
+  </tr>
+  <tr>
+    <td class="name">WeatherMapDto$MainDto</td>
+  </tr>
+  <tr>
+    <td class="name">WeatherMapDto$RainDto</td>
+  </tr>
+  <tr>
+    <td class="name">WeatherMapDto$SnowDto</td>
+  </tr>
+  <tr>
+    <td class="name">WeatherMapDto$SysDto</td>
+  </tr>
+  <tr>
+    <td class="name">WeatherMapDto$WeatherDto</td>
+  </tr>
+  <tr>
+    <td class="name">WeatherMapDto$WeatherForecastDto</td>
+  </tr>
+  <tr>
+    <td class="name">WeatherMapDto$WindDto</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.kodilla.outdoor.equiprent.dto;
+&nbsp;
+&nbsp;import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+&nbsp;import com.fasterxml.jackson.annotation.JsonProperty;
+&nbsp;import io.swagger.v3.oas.annotations.media.Schema;
+&nbsp;import lombok.*;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@AllArgsConstructor
+&nbsp;@NoArgsConstructor
+&nbsp;@Getter
+&nbsp;@Setter
+&nbsp;@JsonIgnoreProperties(ignoreUnknown = true)
+&nbsp;public class WeatherMapDto {
+&nbsp;    @Schema(description = &quot;List of weather forecasts with data every 3 hours&quot;)
+&nbsp;    @JsonProperty(&quot;list&quot;)
+&nbsp;    private List&lt;WeatherForecastDto&gt; weatherForecasts;
+&nbsp;    @Schema(description = &quot;City information&quot;)
+&nbsp;    private CityDto city;
+&nbsp;
+&nbsp;    @Data
+&nbsp;    public static class WeatherForecastDto {
+&nbsp;        @Schema(description = &quot;Time of data forecasted, unix, UTC&quot;)
+&nbsp;        private long dt;
+&nbsp;        @Schema(description = &quot;Main weather data&quot;)
+&nbsp;        private MainDto main;
+&nbsp;        @Schema(description = &quot;Weather condition information&quot;)
+&nbsp;        private List&lt;WeatherDto&gt; weather;
+&nbsp;        @Schema(description = &quot;Cloudiness information&quot;)
+&nbsp;        private CloudsDto clouds;
+&nbsp;        @Schema(description = &quot;Wind information&quot;)
+&nbsp;        private WindDto wind;
+&nbsp;        @Schema(description = &quot;Visibility in metres, maximum 10km&quot;)
+&nbsp;        private int visibility;
+&nbsp;        @Schema(description = &quot;Probability of precipitation (0 to 1)&quot;)
+&nbsp;        private double pop;
+&nbsp;        @Schema(description = &quot;Rain information&quot;)
+&nbsp;        private RainDto rain;
+&nbsp;        @Schema(description = &quot;Snow information&quot;)
+&nbsp;        private SnowDto snow;
+&nbsp;        @Schema(description = &quot;Part of the day (d - day, n - night)&quot;)
+&nbsp;        private SysDto sys;
+&nbsp;        @Schema(description = &quot;Time of data forecasted in ISO format, UTC&quot;)
+&nbsp;        @JsonProperty(&quot;dt_txt&quot;)
+&nbsp;        private String dtTxt;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Data
+&nbsp;    public static class MainDto {
+&nbsp;        @Schema(description = &quot;Temperature in Celsius&quot;)
+&nbsp;        private double temp;
+&nbsp;        @Schema(description = &quot;Feels like temperature in Celsius&quot;)
+&nbsp;        @JsonProperty(&quot;feels_like&quot;)
+&nbsp;        private double feelsLike;
+&nbsp;        @Schema(description = &quot;Minimum temperature in Celsius&quot;)
+&nbsp;        @JsonProperty(&quot;temp_min&quot;)
+&nbsp;        private double tempMin;
+&nbsp;        @Schema(description = &quot;Maximum temperature in Celsius&quot;)
+&nbsp;        @JsonProperty(&quot;temp_max&quot;)
+&nbsp;        private double tempMax;
+&nbsp;        @Schema(description = &quot;Atmospheric pressure on sea level, hPa&quot;)
+&nbsp;        private int pressure;
+&nbsp;        @Schema(description = &quot;Atmospheric pressure on sea level, hPa&quot;)
+&nbsp;        @JsonProperty(&quot;sea_level&quot;)
+&nbsp;        private int seaLevel;
+&nbsp;        @Schema(description = &quot;Atmospheric pressure on ground level, hPa&quot;)
+&nbsp;        @JsonProperty(&quot;grnd_level&quot;)
+&nbsp;        private int groundLevel;
+&nbsp;        @Schema(description = &quot;Humidity in %&quot;)
+&nbsp;        private int humidity;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Data
+&nbsp;    public static class WeatherDto {
+&nbsp;        @Schema(description = &quot;Weather condition ID&quot;)
+&nbsp;        private int id;
+&nbsp;        @Schema(description = &quot;Group of weather parameters (Rain, Snow, Clouds, etc.)&quot;)
+&nbsp;        private String main;
+&nbsp;        @Schema(description = &quot;Detailed weather description&quot;)
+&nbsp;        private String description;
+&nbsp;        @Schema(description = &quot;Weather icon ID&quot;)
+&nbsp;        private String icon;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Data
+&nbsp;    public static class CloudsDto {
+&nbsp;        @Schema(description = &quot;Cloudiness in %&quot;)
+&nbsp;        private int all;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Data
+&nbsp;    public static class WindDto {
+&nbsp;        @Schema(description = &quot;Wind speed in meter/sec&quot;)
+&nbsp;        private double speed;
+&nbsp;        @Schema(description = &quot;Wind direction in degrees&quot;)
+&nbsp;        private int deg;
+&nbsp;        @Schema(description = &quot;Wind gust speed in meter/sec&quot;)
+&nbsp;        private double gust;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Data
+&nbsp;    public static class RainDto {
+&nbsp;        @Schema(description = &quot;Rain volume for last 3 hours, mm&quot;)
+&nbsp;        @JsonProperty(&quot;3h&quot;)
+&nbsp;        private double volumeFor3h;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Data
+&nbsp;    public static class SnowDto {
+&nbsp;        @Schema(description = &quot;Snow volume for last 3 hours, mm&quot;)
+&nbsp;        @JsonProperty(&quot;3h&quot;)
+&nbsp;        private double volumeFor3h;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Data
+&nbsp;    public static class SysDto {
+&nbsp;        @Schema(description = &quot;Part of the day (n - night, d - day)&quot;)
+&nbsp;        private String pod;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Data
+&nbsp;    public static class CityDto {
+&nbsp;        @Schema(description = &quot;City ID&quot;)
+&nbsp;        private int id;
+&nbsp;        @Schema(description = &quot;City name&quot;)
+&nbsp;        private String name;
+&nbsp;        @Schema(description = &quot;Geo location&quot;)
+&nbsp;        @JsonProperty(&quot;coord&quot;)
+&nbsp;        private CoordinatesDto coordinates;
+&nbsp;        @Schema(description = &quot;Country code (e.g., GB, JP)&quot;)
+&nbsp;        private String country;
+&nbsp;        @Schema(description = &quot;City population&quot;)
+&nbsp;        private int population;
+&nbsp;        @Schema(description = &quot;Shift in seconds from UTC&quot;)
+&nbsp;        private int timezone;
+&nbsp;        @Schema(description = &quot;Sunrise time in Unix format, UTC&quot;)
+&nbsp;        private long sunrise;
+&nbsp;        @Schema(description = &quot;Sunset time in Unix format, UTC&quot;)
+&nbsp;        private long sunset;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Data
+&nbsp;    public static class CoordinatesDto {
+&nbsp;        @Schema(description = &quot;Geo location latitude&quot;)
+&nbsp;        @JsonProperty(&quot;lat&quot;)
+&nbsp;        private double latitude;
+&nbsp;        @Schema(description = &quot;Geo location longitude&quot;)
+&nbsp;        @JsonProperty(&quot;lon&quot;)
+&nbsp;        private double longitude;
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-09-26 17:39</div>
+</div>
+</body>
+</html>

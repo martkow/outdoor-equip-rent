@@ -1,7 +1,7 @@
 package com.kodilla.outdoor.equiprent.controller.filter;
 
-import com.kodilla.outdoor.equiprent.controller.exception.CategoryNotFoundException;
-import com.kodilla.outdoor.equiprent.controller.exception.RentalStatusNotFoundException;
+import com.kodilla.outdoor.equiprent.exception.CategoryNotFoundException;
+import com.kodilla.outdoor.equiprent.exception.RentalStatusNotFoundException;
 import com.kodilla.outdoor.equiprent.domain.EquipmentCategory;
 import com.kodilla.outdoor.equiprent.domain.RentalStatus;
 import org.springframework.stereotype.Component;

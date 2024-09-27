@@ -1,7 +1,7 @@
 package com.kodilla.outdoor.equiprent.service;
 
-import com.kodilla.outdoor.equiprent.controller.exception.ActiveEquipmentRentalException;
-import com.kodilla.outdoor.equiprent.controller.exception.EquipmentNotFoundException;
+import com.kodilla.outdoor.equiprent.exception.ActiveEquipmentRentalException;
+import com.kodilla.outdoor.equiprent.exception.EquipmentNotFoundException;
 import com.kodilla.outdoor.equiprent.domain.Equipment;
 import com.kodilla.outdoor.equiprent.domain.EquipmentAvailability;
 import com.kodilla.outdoor.equiprent.domain.EquipmentCategory;

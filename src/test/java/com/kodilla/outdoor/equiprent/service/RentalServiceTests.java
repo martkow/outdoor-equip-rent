@@ -1,6 +1,6 @@
 package com.kodilla.outdoor.equiprent.service;
 
-import com.kodilla.outdoor.equiprent.controller.exception.*;
+import com.kodilla.outdoor.equiprent.exception.*;
 import com.kodilla.outdoor.equiprent.domain.*;
 import com.kodilla.outdoor.equiprent.repository.EquipmentPriceRepository;
 import com.kodilla.outdoor.equiprent.repository.EquipmentRepository;

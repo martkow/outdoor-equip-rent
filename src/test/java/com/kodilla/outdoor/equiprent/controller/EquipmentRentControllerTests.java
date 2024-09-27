@@ -1,7 +1,7 @@
 package com.kodilla.outdoor.equiprent.controller;
 
 import com.google.gson.Gson;
-import com.kodilla.outdoor.equiprent.controller.exception.*;
+import com.kodilla.outdoor.equiprent.exception.*;
 import com.kodilla.outdoor.equiprent.controller.filter.FilterMapper;
 import com.kodilla.outdoor.equiprent.domain.*;
 import com.kodilla.outdoor.equiprent.dto.CreateRentalDto;

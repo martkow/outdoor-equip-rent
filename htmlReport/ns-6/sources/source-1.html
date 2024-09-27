@@ -1,0 +1,208 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > LoggingInterceptor</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.kodilla.outdoor.equiprent.logging</a>
+</div>
+
+<h1>Coverage Summary for Class: LoggingInterceptor (com.kodilla.outdoor.equiprent.logging)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">LoggingInterceptor</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    62.5%
+  </span>
+  <span class="absValue">
+    (10/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    85.7%
+  </span>
+  <span class="absValue">
+    (30/35)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.kodilla.outdoor.equiprent.logging;
+&nbsp;
+&nbsp;import jakarta.servlet.http.HttpServletRequest;
+&nbsp;import jakarta.servlet.http.HttpServletResponse;
+&nbsp;import org.slf4j.Logger;
+&nbsp;import org.slf4j.LoggerFactory;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;import org.springframework.web.servlet.HandlerInterceptor;
+&nbsp;import org.springframework.web.util.ContentCachingRequestWrapper;
+&nbsp;import org.springframework.web.util.ContentCachingResponseWrapper;
+&nbsp;
+&nbsp;import java.io.UnsupportedEncodingException;
+&nbsp;import java.util.Enumeration;
+&nbsp;
+&nbsp;@Component
+<b class="fc">&nbsp;public class LoggingInterceptor implements HandlerInterceptor {</b>
+<b class="fc">&nbsp;    private static final Logger LOGGER = LoggerFactory.getLogger(LoggingInterceptor.class);</b>
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+&nbsp;        // Wrap request and response with ContentCaching wrappers
+<b class="fc">&nbsp;        ContentCachingRequestWrapper cachingRequest = new ContentCachingRequestWrapper(request);</b>
+<b class="fc">&nbsp;        ContentCachingResponseWrapper cachingResponse = new ContentCachingResponseWrapper(response);</b>
+&nbsp;
+&nbsp;        // Forward the wrapped request and response to be processed by the controller
+<b class="fc">&nbsp;        request.setAttribute(&quot;cachingRequest&quot;, cachingRequest);</b>
+<b class="fc">&nbsp;        request.setAttribute(&quot;cachingResponse&quot;, cachingResponse);</b>
+&nbsp;
+&nbsp;        // Logging: Request Method, URI, Params
+<b class="fc">&nbsp;        String params = request.getQueryString() != null ? &quot;?&quot; + request.getQueryString() : &quot;&quot;;</b>
+<b class="fc">&nbsp;        LOGGER.info(&quot;REQUEST: Method={}, URI={}{}&quot;, request.getMethod(), request.getRequestURI(), params);</b>
+&nbsp;
+&nbsp;        // Logging: Headers (if exist)
+<b class="fc">&nbsp;        Enumeration&lt;String&gt; headerNames = request.getHeaderNames();</b>
+<b class="pc">&nbsp;        if (headerNames != null) {</b>
+<b class="fc">&nbsp;            while (headerNames.hasMoreElements()) {</b>
+<b class="fc">&nbsp;                String headerName = headerNames.nextElement();</b>
+<b class="fc">&nbsp;                LOGGER.info(&quot;REQUEST HEADER: {}={}&quot;, headerName, request.getHeader(headerName));</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+&nbsp;        // Read already saved cachingRequest and catchingResponse
+<b class="fc">&nbsp;        ContentCachingRequestWrapper cachingRequest = (ContentCachingRequestWrapper) request.getAttribute(&quot;cachingRequest&quot;);</b>
+<b class="fc">&nbsp;        ContentCachingResponseWrapper cachingResponse = (ContentCachingResponseWrapper) request.getAttribute(&quot;cachingResponse&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        System.out.println(cachingRequest.getContentAsString());</b>
+&nbsp;        // Read request body
+<b class="pc">&nbsp;        if (cachingRequest != null) {</b>
+<b class="fc">&nbsp;            String requestBody =  cachingRequest.getContentAsString();</b>
+<b class="pc">&nbsp;            if (!requestBody.isEmpty()) {</b>
+<b class="nc">&nbsp;                LOGGER.info(&quot;REQUEST BODY: {}&quot;, requestBody);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        // Logging: Response Status
+<b class="fc">&nbsp;        LOGGER.info(&quot;RESPONSE: Status={}&quot;, response.getStatus());</b>
+&nbsp;
+&nbsp;        // Logging: Headers (if exist)
+<b class="fc">&nbsp;        response.getHeaderNames().forEach(headerName -&gt;</b>
+<b class="fc">&nbsp;                LOGGER.info(&quot;RESPONSE HEADER: {}={}&quot;, headerName, response.getHeader(headerName)));</b>
+&nbsp;
+&nbsp;        // Logging: response body
+<b class="pc">&nbsp;        if (cachingResponse != null) {</b>
+<b class="fc">&nbsp;            String responseBody = getCachedResponseBody(cachingResponse);</b>
+<b class="pc">&nbsp;            if (!responseBody.isEmpty()) {</b>
+<b class="nc">&nbsp;                LOGGER.info(&quot;RESPONSE BODY: {}&quot;, responseBody);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Copy the response body back to the response stream
+<b class="fc">&nbsp;            cachingResponse.copyBodyToResponse();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    // Helper method to read the cached response body
+&nbsp;    private String getCachedResponseBody(ContentCachingResponseWrapper response) {
+<b class="fc">&nbsp;        byte[] buf = response.getContentAsByteArray();</b>
+<b class="pc">&nbsp;        if (buf.length &gt; 0) {</b>
+&nbsp;            try {
+<b class="nc">&nbsp;                return new String(buf, 0, buf.length, response.getCharacterEncoding());</b>
+<b class="nc">&nbsp;            } catch (UnsupportedEncodingException ex) {</b>
+<b class="nc">&nbsp;                LOGGER.error(&quot;Error reading response body&quot;, ex);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return &quot;&quot;;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-09-26 17:39</div>
+</div>
+</body>
+</html>

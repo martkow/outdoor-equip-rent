@@ -1,7 +1,7 @@
 package com.kodilla.outdoor.equiprent.controller;
 
-import com.kodilla.outdoor.equiprent.controller.exception.GlobalHttpErrorHandler;
-import com.kodilla.outdoor.equiprent.controller.exception.WeatherForecastNotAvailableException;
+import com.kodilla.outdoor.equiprent.exception.GlobalHttpErrorHandler;
+import com.kodilla.outdoor.equiprent.exception.WeatherForecastNotAvailableException;
 import com.kodilla.outdoor.equiprent.dto.WeatherMapDto;
 import com.kodilla.outdoor.equiprent.open.weather.map.client.OpenWeatherMapClient;
 import io.swagger.v3.oas.annotations.Operation;

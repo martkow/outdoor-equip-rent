@@ -1,9 +1,9 @@
 package com.kodilla.outdoor.equiprent.controller;
 
-import com.kodilla.outdoor.equiprent.controller.exception.ActiveEquipmentRentalException;
-import com.kodilla.outdoor.equiprent.controller.exception.CategoryNotFoundException;
-import com.kodilla.outdoor.equiprent.controller.exception.EquipmentNotFoundException;
-import com.kodilla.outdoor.equiprent.controller.exception.GlobalHttpErrorHandler;
+import com.kodilla.outdoor.equiprent.exception.ActiveEquipmentRentalException;
+import com.kodilla.outdoor.equiprent.exception.CategoryNotFoundException;
+import com.kodilla.outdoor.equiprent.exception.EquipmentNotFoundException;
+import com.kodilla.outdoor.equiprent.exception.GlobalHttpErrorHandler;
 import com.kodilla.outdoor.equiprent.controller.filter.FilterMapper;
 import com.kodilla.outdoor.equiprent.domain.EquipmentCategory;
 import com.kodilla.outdoor.equiprent.dto.CreateEquipmentDto;

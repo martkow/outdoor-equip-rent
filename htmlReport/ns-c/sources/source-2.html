@@ -1,0 +1,91 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > EquipmentPriceRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.kodilla.outdoor.equiprent.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: EquipmentPriceRepository (com.kodilla.outdoor.equiprent.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">EquipmentPriceRepository$MockitoMock$Zlcw2ILH</td>
+  </tr>
+  <tr>
+    <td class="name">EquipmentPriceRepository$MockitoMock$Zlcw2ILH$auxiliary$HAhK9WvR</td>
+  </tr>
+  <tr>
+    <td class="name">EquipmentPriceRepository$MockitoMock$Zlcw2ILH$auxiliary$Z6D7UTsd</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.kodilla.outdoor.equiprent.repository;
+&nbsp;
+&nbsp;import com.kodilla.outdoor.equiprent.domain.Equipment;
+&nbsp;import com.kodilla.outdoor.equiprent.domain.EquipmentPrice;
+&nbsp;import com.kodilla.outdoor.equiprent.domain.Tier;
+&nbsp;import org.springframework.data.repository.CrudRepository;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;public interface EquipmentPriceRepository extends CrudRepository&lt;EquipmentPrice, Long&gt; {
+&nbsp;    @Override
+&nbsp;    Optional&lt;EquipmentPrice&gt; findById(Long id);
+&nbsp;    Optional&lt;EquipmentPrice&gt; findByEquipmentAndTier(Equipment equipment, Tier tier);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-09-26 17:39</div>
+</div>
+</body>
+</html>

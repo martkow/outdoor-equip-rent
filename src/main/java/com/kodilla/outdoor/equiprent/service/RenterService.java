@@ -1,7 +1,7 @@
 package com.kodilla.outdoor.equiprent.service;
 
-import com.kodilla.outdoor.equiprent.controller.exception.RenterAlreadyExistsException;
-import com.kodilla.outdoor.equiprent.controller.exception.RenterNotFoundException;
+import com.kodilla.outdoor.equiprent.exception.RenterAlreadyExistsException;
+import com.kodilla.outdoor.equiprent.exception.RenterNotFoundException;
 import com.kodilla.outdoor.equiprent.domain.Renter;
 import com.kodilla.outdoor.equiprent.repository.RenterRepository;
 import lombok.AllArgsConstructor;

@@ -29,12 +29,12 @@ public class RentalRepositoryTests {
     void shouldSaveAndReturnRental() {
         // Given
         Equipment equipment = new Equipment(null, "Tent Plus", "Camping tent", EquipmentCategory.TENT, null, null, LocalDateTime.now());
-        equipmentRepository.save(equipment);
+        Equipment savedEquipment = equipmentRepository.save(equipment);
 
-        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.now(), null);
-        renterRepository.save(renter);
+        Renter renter = new Renter(null, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.now(), null);
+        Renter savedRenter = renterRepository.save(renter);
 
-        Rental rental = new Rental(null, equipment, renter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
+        Rental rental = new Rental(null, savedEquipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
         // When
         Rental savedRental = rentalRepository.save(rental);
         // Then
@@ -154,9 +154,11 @@ public class RentalRepositoryTests {
         // Given
         Equipment equipment = new Equipment(null, "Tent Plus", "Camping tent", EquipmentCategory.TENT, null, null, LocalDateTime.now());
         Equipment savedEquipment = equipmentRepository.save(equipment);
+        Long savedEquipmentId = savedEquipment.getId();;
 
         Renter renter = new Renter(null, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.now(), null);
         Renter savedRenter = renterRepository.save(renter);
+        Long savedRenterId = savedRenter.getId();
 
         Rental rental = new Rental(null, savedEquipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
         Rental savedRental = rentalRepository.save(rental);
@@ -164,8 +166,8 @@ public class RentalRepositoryTests {
         // When
         rentalRepository.deleteById(savedRentalId);
         // Then
-        Assertions.assertTrue(equipmentRepository.findById(savedRentalId).isPresent());
-        Assertions.assertTrue(renterRepository.findById(savedRentalId).isPresent());
+        Assertions.assertTrue(equipmentRepository.findById(savedEquipmentId).isPresent());
+        Assertions.assertTrue(renterRepository.findById(savedRenterId).isPresent());
     }
 
     @DisplayName("Test case for deleting Rental by ID")

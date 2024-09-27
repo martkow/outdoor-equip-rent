@@ -1,8 +1,8 @@
 package com.kodilla.outdoor.equiprent.controller;
 
 import com.google.gson.Gson;
-import com.kodilla.outdoor.equiprent.controller.exception.RenterAlreadyExistsException;
-import com.kodilla.outdoor.equiprent.controller.exception.RenterNotFoundException;
+import com.kodilla.outdoor.equiprent.exception.RenterAlreadyExistsException;
+import com.kodilla.outdoor.equiprent.exception.RenterNotFoundException;
 import com.kodilla.outdoor.equiprent.domain.Renter;
 import com.kodilla.outdoor.equiprent.dto.CreateUpdateRenterDto;
 import com.kodilla.outdoor.equiprent.dto.RentalDto;

@@ -1,10 +1,9 @@
 package com.kodilla.outdoor.equiprent.controller;
 
-import com.kodilla.outdoor.equiprent.controller.exception.*;
 import com.kodilla.outdoor.equiprent.controller.filter.FilterMapper;
-import com.kodilla.outdoor.equiprent.domain.EquipmentCategory;
 import com.kodilla.outdoor.equiprent.dto.CreateRentalDto;
 import com.kodilla.outdoor.equiprent.dto.RentalDto;
+import com.kodilla.outdoor.equiprent.exception.*;
 import com.kodilla.outdoor.equiprent.mapper.RentalMapper;
 import com.kodilla.outdoor.equiprent.service.RentalService;
 import io.swagger.v3.oas.annotations.Operation;

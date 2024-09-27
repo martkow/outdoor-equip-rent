@@ -1,0 +1,144 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > OpenWeatherMapClient</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.kodilla.outdoor.equiprent.open.weather.map.client</a>
+</div>
+
+<h1>Coverage Summary for Class: OpenWeatherMapClient (com.kodilla.outdoor.equiprent.open.weather.map.client)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">OpenWeatherMapClient</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (13/13)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.kodilla.outdoor.equiprent.open.weather.map.client;
+&nbsp;
+&nbsp;import com.kodilla.outdoor.equiprent.controller.exception.WeatherForecastNotAvailableException;
+&nbsp;import com.kodilla.outdoor.equiprent.dto.WeatherMapDto;
+&nbsp;import com.kodilla.outdoor.equiprent.open.weather.map.config.OpenWeatherMapConfig;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.slf4j.Logger;
+&nbsp;import org.slf4j.LoggerFactory;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;import org.springframework.web.client.RestClientException;
+&nbsp;import org.springframework.web.client.RestTemplate;
+&nbsp;import org.springframework.web.util.UriComponentsBuilder;
+&nbsp;
+&nbsp;import java.net.URI;
+&nbsp;
+&nbsp;@RequiredArgsConstructor
+&nbsp;@Component
+&nbsp;public class OpenWeatherMapClient {
+<b class="fc">&nbsp;    private static final Logger LOGGER = LoggerFactory.getLogger(OpenWeatherMapClient.class);</b>
+&nbsp;    private final OpenWeatherMapConfig openWeatherMapConfig;
+&nbsp;    private final RestTemplate restTemplate;
+&nbsp;
+&nbsp;    public WeatherMapDto getWeatherForecast(double lat, double lon) throws WeatherForecastNotAvailableException {
+&nbsp;        try {
+<b class="fc">&nbsp;            URI url = UriComponentsBuilder.fromHttpUrl(openWeatherMapConfig.getApiEndpoint())</b>
+<b class="fc">&nbsp;                    .queryParam(&quot;lat&quot;, lat)</b>
+<b class="fc">&nbsp;                    .queryParam(&quot;lon&quot;, lon)</b>
+<b class="fc">&nbsp;                    .queryParam(&quot;appid&quot;, openWeatherMapConfig.getApiKey())</b>
+<b class="fc">&nbsp;                    .queryParam(&quot;units&quot;, &quot;metric&quot;)</b>
+<b class="fc">&nbsp;                    .build()</b>
+<b class="fc">&nbsp;                    .encode()</b>
+<b class="fc">&nbsp;                    .toUri();</b>
+&nbsp;
+<b class="fc">&nbsp;            return restTemplate.getForObject(url, WeatherMapDto.class);</b>
+<b class="fc">&nbsp;        } catch (RestClientException rce) {</b>
+<b class="fc">&nbsp;            LOGGER.error(rce.getMessage(), rce);</b>
+<b class="fc">&nbsp;            throw new WeatherForecastNotAvailableException();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-09-26 17:39</div>
+</div>
+</body>
+</html>
