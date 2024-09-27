@@ -4,12 +4,10 @@ import com.kodilla.outdoor.equiprent.exception.ActiveEquipmentRentalException;
 import com.kodilla.outdoor.equiprent.exception.CategoryNotFoundException;
 import com.kodilla.outdoor.equiprent.exception.EquipmentNotFoundException;
 import com.kodilla.outdoor.equiprent.exception.GlobalHttpErrorHandler;
-import com.kodilla.outdoor.equiprent.controller.filter.FilterMapper;
 import com.kodilla.outdoor.equiprent.domain.EquipmentCategory;
 import com.kodilla.outdoor.equiprent.dto.CreateEquipmentDto;
 import com.kodilla.outdoor.equiprent.dto.EquipmentDto;
-import com.kodilla.outdoor.equiprent.mapper.EquipmentMapper;
-import com.kodilla.outdoor.equiprent.service.EquipmentService;
+import com.kodilla.outdoor.equiprent.facade.EquipmentFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -32,9 +30,7 @@ import java.util.Optional;
 @Tag(name = "Equipment", description = "Managing equipment")
 @RequiredArgsConstructor
 public class EquipmentController {
-    private final EquipmentService equipmentService;
-    private  final EquipmentMapper equipmentMapper;
-    private final FilterMapper filterMapper;
+    private final EquipmentFacade equipmentFacade;
 
     @Operation(
             description = "Retrieves all available equipment for rent, with optional filtering by category",
@@ -59,11 +55,7 @@ public class EquipmentController {
     public ResponseEntity<List<EquipmentDto>> getAllAvailableEquipment(
             @Parameter(description = "Category of the equipment", example = "TENT")
             @RequestParam Optional<String> category) throws CategoryNotFoundException {
-        return ResponseEntity.ok(equipmentMapper.mapEquipmentListToEquipmentDtoList(
-                equipmentService.getEquipmentByCategories(
-                        filterMapper.mapStringToEquipmentCategoryList(category)
-                )
-        ));
+        return ResponseEntity.ok(equipmentFacade.getAllAvailableEquipment(category));
     }
 
     @Operation(
@@ -81,7 +73,7 @@ public class EquipmentController {
     @GetMapping(value = "/categories", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<EquipmentCategory>> getAllCategories() {
-        return ResponseEntity.ok(equipmentService.getAllCategories());
+        return ResponseEntity.ok(equipmentFacade.getAllCategories());
     }
 
     @Operation(
@@ -108,11 +100,7 @@ public class EquipmentController {
             @Parameter(description = "Category of the equipment", required = true, example = "TENT")
             @PathVariable String category,
             @RequestBody CreateEquipmentDto createEquipmentDto) throws CategoryNotFoundException {
-        return ResponseEntity.ok(equipmentMapper.mapEquipmentToEquipmentDto(
-                equipmentService.addEquipment(
-                        equipmentMapper.mapCreateEquipmentDtoToEquipment(filterMapper.mapToCategoryOrThrow(category), createEquipmentDto)
-                )
-        ));
+        return ResponseEntity.ok(equipmentFacade.createEquipmentInCategory(category, createEquipmentDto));
     }
 
     @Operation(
@@ -140,11 +128,10 @@ public class EquipmentController {
     public ResponseEntity<Void> deleteEquipmentFromCategory(
             @Parameter(description = "Category of the equipment", required = true, example = "TENT")
             @PathVariable String category,
-            @Parameter(description = "ID of the equipment to be deleted", required = true, example = "12345")
+            @Parameter(description = "ID of the equipment to be deleted", required = true, example = "1")
             @PathVariable Long equipmentId) throws CategoryNotFoundException, EquipmentNotFoundException, ActiveEquipmentRentalException {
-        filterMapper.mapToCategoryOrThrow(category);
+        equipmentFacade.deleteEquipmentFromCategory(category, equipmentId);
 
-        equipmentService.updateEquipmentAvailability(equipmentId);
         return ResponseEntity.noContent().build();
     }
 }

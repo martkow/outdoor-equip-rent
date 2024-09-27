@@ -1,11 +1,8 @@
 package com.kodilla.outdoor.equiprent.service;
 
+import com.kodilla.outdoor.equiprent.domain.*;
 import com.kodilla.outdoor.equiprent.exception.ActiveEquipmentRentalException;
 import com.kodilla.outdoor.equiprent.exception.EquipmentNotFoundException;
-import com.kodilla.outdoor.equiprent.domain.Equipment;
-import com.kodilla.outdoor.equiprent.domain.EquipmentAvailability;
-import com.kodilla.outdoor.equiprent.domain.EquipmentCategory;
-import com.kodilla.outdoor.equiprent.domain.RentalStatus;
 import com.kodilla.outdoor.equiprent.repository.EquipmentRepository;
 import com.kodilla.outdoor.equiprent.repository.RentalRepository;
 import org.junit.jupiter.api.Assertions;
@@ -18,11 +15,13 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@DisplayName("Tests for EquipmentService")
+@DisplayName("Tests for EquipmentService class")
 @ExtendWith(MockitoExtension.class)
 public class EquipmentServiceTests {
     @InjectMocks
@@ -32,13 +31,14 @@ public class EquipmentServiceTests {
     @Mock
     private RentalRepository rentalRepository;
     private Equipment equipment;
-    private EquipmentAvailability equipmentAvailability;
 
     @BeforeEach
     void setUp() {
-        equipment = new Equipment(1L, "Tent Plus", "Camping tent", EquipmentCategory.TENT, null, null, LocalDateTime.of(2024, 9, 24, 13, 0, 0));
-        equipmentAvailability = new EquipmentAvailability(1L, equipment, 10L, 5L, true, LocalDateTime.of(2024, 9, 24, 13, 0, 0));
+        equipment = new Equipment(1L, "Tent Plus", "Camping tent", EquipmentCategory.TENT, null, new ArrayList<>(), LocalDateTime.of(2024, 9, 24, 13, 0, 0));
+        EquipmentAvailability equipmentAvailability = new EquipmentAvailability(1L, equipment, 10L, 5L, true, LocalDateTime.of(2024, 9, 24, 13, 0, 0));
         equipment.setEquipmentAvailability(equipmentAvailability);
+        EquipmentPrice equipmentPrice = new EquipmentPrice(1L, equipment, Tier.HOUR, new BigDecimal("10.00"), LocalDateTime.of(2024, 9, 24, 13, 0, 0));
+        equipment.getPrices().add(equipmentPrice);
     }
 
     @Test
@@ -88,7 +88,7 @@ public class EquipmentServiceTests {
     }
 
     @Test
-    @DisplayName("Test for adding equipment")
+    @DisplayName("Test case for adding equipment")
     void shouldAddEquipment() {
         // Given
         Mockito.when(equipmentRepository.save(Mockito.any())).thenReturn(equipment);
@@ -98,6 +98,10 @@ public class EquipmentServiceTests {
         Assertions.assertNotNull(result);
         Assertions.assertEquals("Tent Plus", result.getName());
         Assertions.assertEquals("Camping tent", result.getDescription());
+        Assertions.assertTrue(result.getEquipmentAvailability().isAvailable());
+        Assertions.assertNotNull(result.getPrices());
+        Assertions.assertEquals(1, result.getPrices().size());
+        Assertions.assertNotNull(result.getPrices().get(0).getCreationDate());
     }
 
     @Test

@@ -1,4 +1,4 @@
-package com.kodilla.outdoor.equiprent.controller.filter;
+package com.kodilla.outdoor.equiprent.mapper;
 
 import com.kodilla.outdoor.equiprent.exception.CategoryNotFoundException;
 import com.kodilla.outdoor.equiprent.exception.RentalStatusNotFoundException;

@@ -7,7 +7,6 @@ import com.kodilla.outdoor.equiprent.dto.EquipmentDto;
 import com.kodilla.outdoor.equiprent.dto.EquipmentPriceDto;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,40 +41,32 @@ public class EquipmentMapper {
 
     public List<EquipmentPrice> mapCreateEquipmentPriceDtoListToEquipmentPriceList(Equipment equipment, List<CreateEquipmentPriceDto> createEquipmentPriceDtoList) {
         return createEquipmentPriceDtoList.stream()
-                .map(epdto -> mapCreateEquipmentPriceDtoToEquipmentPrice(equipment, epdto))
+                .map(cepdto -> mapCreateEquipmentPriceDtoToEquipmentPrice(equipment, cepdto))
                 .toList();
     }
 
     public EquipmentPrice mapCreateEquipmentPriceDtoToEquipmentPrice(Equipment equipment, CreateEquipmentPriceDto createEquipmentPriceDto) {
         return EquipmentPrice.builder()
-                .id(null)
                 .equipment(equipment)
                 .tier(createEquipmentPriceDto.getPriceTier())
                 .price(createEquipmentPriceDto.getPrice())
-                .creationDate(LocalDateTime.now())
                 .build();
     }
 
     public EquipmentAvailability mapCurrentQuantityToEquipmentAvailability(Equipment equipment, Long currentQuantity) {
         return EquipmentAvailability.builder()
-                .id(null)
                 .equipment(equipment)
                 .initialQuantity(currentQuantity)
                 .currentQuantity(currentQuantity)
-                .available(true)
-                .creationDate(LocalDateTime.now())
                 .build();
     }
 
     public Equipment mapCreateEquipmentDtoToEquipment(EquipmentCategory equipmentCategory, CreateEquipmentDto createEquipmentDto) {
         Equipment equipment = Equipment.builder()
-                .id(null)
                 .name(createEquipmentDto.getName())
                 .description(createEquipmentDto.getDescription())
                 .category(equipmentCategory)
-                .equipmentAvailability(null)
                 .prices(new ArrayList<>())
-                .creationDate(LocalDateTime.now()) // na poziomie serwisu ustawiac
                 .build();
 
         equipment.setPrices(mapCreateEquipmentPriceDtoListToEquipmentPriceList(equipment, createEquipmentDto.getPrices()));

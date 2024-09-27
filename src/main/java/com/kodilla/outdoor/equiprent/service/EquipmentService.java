@@ -10,6 +10,7 @@ import com.kodilla.outdoor.equiprent.repository.RentalRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @AllArgsConstructor
@@ -35,6 +36,11 @@ public class EquipmentService {
     }
 
     public Equipment addEquipment(Equipment equipment) {
+        equipment.setCreationDate(LocalDateTime.now());
+        equipment.getEquipmentAvailability().setAvailable(true);
+        equipment.getEquipmentAvailability().setCreationDate(LocalDateTime.now());
+        equipment.getPrices().forEach(ep -> ep.setCreationDate(LocalDateTime.now()));
+
         return equipmentRepository.save(equipment);
     }
 

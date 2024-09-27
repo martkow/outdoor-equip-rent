@@ -40,8 +40,15 @@ public class GlobalHttpErrorHandler extends ResponseEntityExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     @ExceptionHandler(EquipmentNotAvailableException.class)
-    public Error handleEquipmentAvailableException(EquipmentNotAvailableException enae) {
+    public Error handleEquipmentNotAvailableException(EquipmentNotAvailableException enae) {
         return new Error("ERROR", "equipment.not.available", "Equipment with ID " + enae.getEquipmentId() + " not available.");
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    @ExceptionHandler(ActiveEquipmentRentalException.class)
+    public Error handleActiveEquipmentRentalException(ActiveEquipmentRentalException aere) {
+        return new Error("ERROR", "equipment.has.active.rentals", "Equipment with ID " + aere.getEquipmentId() + " is currently rented.");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
