@@ -6,6 +6,7 @@ import com.kodilla.outdoor.equiprent.domain.RentalStatus;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,4 +23,7 @@ public interface RentalRepository extends CrudRepository<Rental, Long> {
     List<Rental> findByRenterId(Long renterId);
     @Override
     void deleteById(Long id);
+    long countByRentalStartBetween(LocalDateTime startDate, LocalDateTime endDate);
+    long countByReturnDateBetween(LocalDateTime startDate, LocalDateTime endDate);
+    long countByStatusAndRentalEndBefore(RentalStatus rentalStatus, LocalDateTime date);
 }

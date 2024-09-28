@@ -154,7 +154,7 @@ public class RentalRepositoryTests {
         // Given
         Equipment equipment = new Equipment(null, "Tent Plus", "Camping tent", EquipmentCategory.TENT, null, null, LocalDateTime.now());
         Equipment savedEquipment = equipmentRepository.save(equipment);
-        Long savedEquipmentId = savedEquipment.getId();;
+        Long savedEquipmentId = savedEquipment.getId();
 
         Renter renter = new Renter(null, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.now(), null);
         Renter savedRenter = renterRepository.save(renter);
@@ -189,4 +189,69 @@ public class RentalRepositoryTests {
         Assertions.assertFalse(rentalRepository.findById(savedRentalId).isPresent());
     }
 
+    @DisplayName("Test case for countByRentalStartBetween method")
+    @Test
+    void shouldCountRentalsByRentalStartBetween() {
+        // Given
+        Equipment equipment = new Equipment(null, "Tent Plus", "Camping tent", EquipmentCategory.TENT, null, null, LocalDateTime.now());
+        Equipment savedEquipment = equipmentRepository.save(equipment);
+
+        Renter renter = new Renter(null, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.now(), null);
+        Renter savedRenter = renterRepository.save(renter);
+
+        Rental rental1 = new Rental(null, savedEquipment, savedRenter, LocalDateTime.of(2024, 9, 27, 12, 0, 0), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
+        Rental rental2 = new Rental(null, savedEquipment, savedRenter, LocalDateTime.of(2024, 10, 27, 12, 0, 0), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
+        Rental rental3 = new Rental(null, savedEquipment, savedRenter, LocalDateTime.of(2024, 11, 27, 12, 0, 0), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
+        rentalRepository.save(rental1);
+        rentalRepository.save(rental2);
+        rentalRepository.save(rental3);
+        // When
+        Long result = rentalRepository.countByRentalStartBetween(LocalDateTime.of(2024, 10, 27, 12, 0, 0), LocalDateTime.of(2024, 11, 27, 12, 0, 0));
+        // Then
+        Assertions.assertEquals(2, result);
+    }
+
+    @DisplayName("Test case for countByReturnDateBetween method")
+    @Test
+    void shouldCountRentalsByReturnDateBetween() {
+        // Given
+        Equipment equipment = new Equipment(null, "Tent Plus", "Camping tent", EquipmentCategory.TENT, null, null, LocalDateTime.now());
+        Equipment savedEquipment = equipmentRepository.save(equipment);
+
+        Renter renter = new Renter(null, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.now(), null);
+        Renter savedRenter = renterRepository.save(renter);
+
+        Rental rental1 = new Rental(null, savedEquipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), LocalDateTime.of(2024, 9, 27, 12, 0, 0), RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
+        Rental rental2 = new Rental(null, savedEquipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), LocalDateTime.of(2024, 10, 27, 12, 0, 0), RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
+        Rental rental3 = new Rental(null, savedEquipment, savedRenter, LocalDateTime.now(), LocalDateTime.of(2024, 11, 27, 12, 0, 0), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
+        rentalRepository.save(rental1);
+        rentalRepository.save(rental2);
+        rentalRepository.save(rental3);
+        // When
+        Long result = rentalRepository.countByReturnDateBetween(LocalDateTime.of(2024, 10, 27, 12, 0, 0), LocalDateTime.of(2024, 11, 27, 12, 0, 0));
+        // Then
+        Assertions.assertEquals(1, result);
+    }
+
+    @DisplayName("Test case for countByStatusAndRentalEndBefore method")
+    @Test
+    void shouldCountRentalsByStatusAndRentalEndBefore() {
+        // Given
+        Equipment equipment = new Equipment(null, "Tent Plus", "Camping tent", EquipmentCategory.TENT, null, null, LocalDateTime.now());
+        Equipment savedEquipment = equipmentRepository.save(equipment);
+
+        Renter renter = new Renter(null, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.now(), null);
+        Renter savedRenter = renterRepository.save(renter);
+
+        Rental rental1 = new Rental(null, savedEquipment, savedRenter, LocalDateTime.now(), LocalDateTime.of(2024, 11, 27, 12, 0, 0), LocalDateTime.of(2024, 12, 27, 12, 0, 0), RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
+        Rental rental2 = new Rental(null, savedEquipment, savedRenter, LocalDateTime.now(), LocalDateTime.of(2024, 11, 26, 12, 0, 0), LocalDateTime.of(2024, 12, 27, 12, 0, 0), RentalStatus.COMPLETED, new BigDecimal("10.00"), LocalDateTime.now(), null);
+        Rental rental3 = new Rental(null, savedEquipment, savedRenter, LocalDateTime.now(), LocalDateTime.of(2024, 11, 26, 12, 0, 0), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
+        rentalRepository.save(rental1);
+        rentalRepository.save(rental2);
+        rentalRepository.save(rental3);
+        // When
+        Long result = rentalRepository.countByStatusAndRentalEndBefore(RentalStatus.ACTIVE, LocalDateTime.of(2024, 11, 27, 12, 0, 0));
+        // Then
+        Assertions.assertEquals(1, result);
+    }
 }

@@ -27,8 +27,8 @@ public class Rental {
     private LocalDateTime rentalStart;
     @Column(name = "RENTAL_END", nullable = false)
     private LocalDateTime rentalEnd;
-    @Column(name = "ACTUAL_RETURN_DATE")
-    private LocalDateTime actualReturnDate;
+    @Column(name = "RETURN_DATE")
+    private LocalDateTime returnDate;
     @Column(name = "STATUS", nullable = false)
     private RentalStatus status;
     @Column(name = "TOTAL_PRICE", nullable = false)
