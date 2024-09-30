@@ -73,16 +73,31 @@ public class EquipmentFacadeTests {
         Assertions.assertEquals("Tent Plus", result.get(0).getName());
     }
 
+    @DisplayName("Test case for fetching equipment by ID")
+    @Test
+    void shouldFetchEquipmentById() throws Exception {
+        // Given
+        Equipment equipment = new Equipment(1L, "Tent Plus", "Camping tent", EquipmentCategory.TENT, null, null, LocalDateTime.of(2024, 9, 24, 13, 0, 0));
+        EquipmentDto equipmentDto = new EquipmentDto(1L, "Tent Plus", "Camping tent", "TENT", 3L, new ArrayList<>(List.of()));
+
+        Mockito.when(equipmentService.getEquipmentById(Mockito.anyLong())).thenReturn(equipment);
+        Mockito.when(equipmentMapper.mapEquipmentToEquipmentDto(Mockito.any())).thenReturn(equipmentDto);
+        // When
+        EquipmentDto result = equipmentFacade.getEquipmentById(1L);
+        // Then
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals("Tent Plus", result.getName());
+    }
+
     @DisplayName("Test case for fetching equipment by category")
     @Test
     void shouldFetchEquipmentByCategory() throws Exception {
         // Given
         Equipment equipment = new Equipment(1L, "Tent Plus", "Camping tent", EquipmentCategory.TENT, null, null, LocalDateTime.of(2024, 9, 24, 13, 0, 0));
-        EquipmentPriceDto equipmentPriceDto = new EquipmentPriceDto(2L, "HOUR", new BigDecimal("1.00"));
-        EquipmentDto equipmentDto = new EquipmentDto(1L, "Tent Plus", "Camping tent", "TENT", 3L, new ArrayList<>(List.of(equipmentPriceDto)));
+        EquipmentDto equipmentDto = new EquipmentDto(1L, "Tent Plus", "Camping tent", "TENT", 3L,  new ArrayList<>(List.of()));
 
+        Mockito.when(equipmentService.getEquipmentByCategories(Mockito.any())).thenReturn(List.of(equipment));
         Mockito.when(filterMapper.mapStringToEquipmentCategoryList(Mockito.any())).thenReturn(List.of(EquipmentCategory.TENT));
-        Mockito.when(equipmentService.getEquipmentByCategories(Mockito.anyList())).thenReturn(List.of(equipment));
         Mockito.when(equipmentMapper.mapEquipmentListToEquipmentDtoList(Mockito.anyList())).thenReturn(List.of(equipmentDto));
         // When
         List<EquipmentDto> result = equipmentFacade.getAllAvailableEquipment(Optional.of("tent"));

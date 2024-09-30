@@ -1,6 +1,7 @@
 package com.kodilla.outdoor.equiprent.controller;
 
 import com.kodilla.outdoor.equiprent.exception.GlobalHttpErrorHandler;
+import com.kodilla.outdoor.equiprent.exception.RentalNotFoundException;
 import com.kodilla.outdoor.equiprent.exception.RenterAlreadyExistsException;
 import com.kodilla.outdoor.equiprent.exception.RenterNotFoundException;
 import com.kodilla.outdoor.equiprent.dto.CreateUpdateRenterDto;
@@ -154,8 +155,40 @@ public class RenterController {
     public ResponseEntity<List<RentalDto>> getRentalsByRenterId(
             @Parameter(description = "ID of the renter", example = "1")
             @PathVariable Long renterId) throws RenterNotFoundException {
-        renterService.getRenter(renterId);
-
         return ResponseEntity.ok(rentalMapper.mapRentalListToRentalDtoList(rentalService.getRentalsByRenterId(renterId)));
+    }
+
+    @Operation(
+            description = "Get a specific rental by renter ID and rental ID",
+            summary = "Get rental by renter and rental ID"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Rental retrieved successfully",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = RentalDto.class)
+                    )),
+            @ApiResponse(responseCode = "400",
+                    description = "Renter with ID {renterId} not found.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = GlobalHttpErrorHandler.Error.class)
+                    )),
+            @ApiResponse(responseCode = "400",
+                    description = "Rental with ID {rentalId} not found.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = GlobalHttpErrorHandler.Error.class)
+                    )),
+    })
+    @GetMapping("/{renterId}/rentals/{rentalId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<RentalDto> getRentalByRenterIdAndRentalId(
+            @Parameter(description = "ID of the renter", example = "1")
+            @PathVariable Long renterId,
+            @Parameter(description = "ID of the rental", example = "1")
+            @PathVariable Long rentalId) throws RenterNotFoundException, RentalNotFoundException {
+        return ResponseEntity.ok(rentalMapper.mapRentalToRentalDto(rentalService.getRentalByRenterIdAndRentalId(renterId, rentalId)));
     }
 }

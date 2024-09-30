@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @DisplayName("Tests for RentalService")
 @ExtendWith(MockitoExtension.class)
@@ -221,12 +222,13 @@ public class RentalServiceTests {
 
     @Test
     @DisplayName("Test for getting rentals by renter ID")
-    void shouldGetRentalsByRenterId() {
+    void shouldGetRentalsByRenterId() throws RenterNotFoundException {
         // Given
-        Long renterId = renter.getId();
+        Long renterId = 1L;
         List<Rental> expectedRentals = List.of(rental);
 
-        Mockito.when(rentalRepository.findByRenterId(renterId)).thenReturn(expectedRentals);
+        Mockito.when(rentalRepository.findByRenterId(Mockito.anyLong())).thenReturn(expectedRentals);
+        Mockito.when(renterRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(renter));
         // When
         List<Rental> result = rentalService.getRentalsByRenterId(renterId);
         // Then

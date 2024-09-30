@@ -30,6 +30,12 @@ public class EquipmentFacade {
         );
     }
 
+    public EquipmentDto getEquipmentById(Long equipmentId) throws EquipmentNotFoundException {
+        return equipmentMapper.mapEquipmentToEquipmentDto(
+                equipmentService.getEquipmentById(equipmentId)
+        );
+    }
+
     public List<EquipmentCategory> getAllCategories() {
         return equipmentService.getAllCategories();
     }

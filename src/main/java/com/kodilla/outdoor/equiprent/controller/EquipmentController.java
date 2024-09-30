@@ -59,6 +59,32 @@ public class EquipmentController {
     }
 
     @Operation(
+            summary = "Get equipment details by ID",
+            description = "Retrieves details of specific equipment by its ID"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Equipment retrieved successfully.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = EquipmentDto.class)
+                    )),
+            @ApiResponse(responseCode = "400",
+                    description = "Equipment with ID {equipmentId} not found.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = GlobalHttpErrorHandler.Error.class)
+                    ))
+    })
+    @GetMapping(value = "/{equipmentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<EquipmentDto> getEquipmentById(
+            @Parameter(description = "ID of the equipment to retrieve", required = true, example = "1")
+            @PathVariable Long equipmentId) throws EquipmentNotFoundException {
+        return ResponseEntity.ok(equipmentFacade.getEquipmentById(equipmentId));
+    }
+
+    @Operation(
             description = "Retrieves all available equipment categories",
             summary = "Get all available equipment categories"
     )

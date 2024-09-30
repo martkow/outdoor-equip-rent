@@ -87,6 +87,43 @@ public class EquipmentControllerTests {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.description", Matchers.is("Category unknown not found.")));
     }
 
+    @DisplayName("Test case for fetching equipment by ID")
+    @Test
+    void shouldFetchEquipmentById() throws Exception {
+        // Given
+        EquipmentPriceDto equipmentPriceDto = new EquipmentPriceDto(2L, "HOUR", new BigDecimal("1.00"));
+        EquipmentDto equipmentDto = new EquipmentDto(1L, "Tent Plus", "Camping tent", "TENT", 3L, new ArrayList<>(List.of(equipmentPriceDto)));
+
+        Mockito.when(equipmentFacade.getEquipmentById(Mockito.anyLong())).thenReturn(equipmentDto);
+        // When & Then
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/equipment/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name", Matchers.is("Tent Plus")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.description", Matchers.is("Camping tent")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.category", Matchers.is("TENT")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.availableQuantity", Matchers.is(3)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.prices[0].id", Matchers.is(2)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.prices[0].priceTier", Matchers.is("HOUR")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.prices[0].price", Matchers.is(1.00)));
+    }
+
+    @DisplayName("Test case for EquipmentNotFoundException when fetching non-existing equipment")
+    @Test
+    void shouldHandleEquipmentNotFoundException() throws Exception {
+        // Given
+        Mockito.when(equipmentFacade.getEquipmentById(Mockito.anyLong())).thenThrow(new EquipmentNotFoundException(1L));
+        // When & Then
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/equipment/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().is(400))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.level", Matchers.is("ERROR")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is("equipment.does.not.exist")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.description", Matchers.is("Equipment with ID 1 not found.")));
+    }
+
+
     @DisplayName("Test case for fetching all categories")
     @Test
     void shouldFetchAllCategories() throws Exception {

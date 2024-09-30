@@ -23,6 +23,10 @@ public class EquipmentService {
         return equipmentRepository.findAll();
     }
 
+    public Equipment getEquipmentById(Long equipmentId) throws EquipmentNotFoundException {
+        return equipmentRepository.findById(equipmentId).orElseThrow(() -> new EquipmentNotFoundException(equipmentId));
+    }
+
     public List<Equipment> getEquipmentByCategories(List<EquipmentCategory> categories) {
         if (categories.isEmpty()) {
             return getAllEquipment();

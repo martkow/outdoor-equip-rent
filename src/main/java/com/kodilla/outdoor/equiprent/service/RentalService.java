@@ -104,7 +104,15 @@ public class RentalService {
         return rentalRepository.save(rental);
     }
 
-    public List<Rental> getRentalsByRenterId(Long renterId) {
+    public List<Rental> getRentalsByRenterId(Long renterId) throws RenterNotFoundException {
+        renterRepository.findById(renterId)
+                .orElseThrow(() -> new RenterNotFoundException(renterId));
+
         return rentalRepository.findByRenterId(renterId);
+    }
+
+    public Rental getRentalByRenterIdAndRentalId(Long renterId, Long rentalId) throws RenterNotFoundException, RentalNotFoundException {
+        return getRentalsByRenterId(renterId).stream()
+                .filter(r -> r.getId().equals(rentalId)).findAny().orElseThrow(() -> new RentalNotFoundException(rentalId));
     }
 }
