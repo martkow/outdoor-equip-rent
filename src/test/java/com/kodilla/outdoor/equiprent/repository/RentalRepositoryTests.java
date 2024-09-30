@@ -34,7 +34,7 @@ public class RentalRepositoryTests {
         Renter renter = new Renter(null, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.now(), null);
         Renter savedRenter = renterRepository.save(renter);
 
-        Rental rental = new Rental(null, savedEquipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
+        Rental rental = new Rental(null, savedEquipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), CurrencyCode.PLN, LocalDateTime.now(), null);
         // When
         Rental savedRental = rentalRepository.save(rental);
         // Then
@@ -58,7 +58,7 @@ public class RentalRepositoryTests {
         Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 14, 0, 0), null);
         Renter savedRenter = renterRepository.save(renter);
 
-        Rental rental = new Rental(null, savedEquipment, savedRenter, LocalDateTime.of(2024, 9, 24, 12, 0, 0), LocalDateTime.of(2024, 9, 24, 14, 0, 0), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.of(2024, 9, 24, 13, 0, 0), null);
+        Rental rental = new Rental(null, savedEquipment, savedRenter, LocalDateTime.of(2024, 9, 24, 12, 0, 0), LocalDateTime.of(2024, 9, 24, 14, 0, 0), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), CurrencyCode.PLN, LocalDateTime.of(2024, 9, 24, 13, 0, 0), null);
         rentalRepository.save(rental);
         // When
         boolean result = rentalRepository.existsRentalByEquipmentAndStatus(equipment, RentalStatus.ACTIVE);
@@ -76,7 +76,7 @@ public class RentalRepositoryTests {
         Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.now(), null);
         Renter savedRenter = renterRepository.save(renter);
 
-        Rental rental = new Rental(null, equipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
+        Rental rental = new Rental(null, equipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), CurrencyCode.PLN, LocalDateTime.now(), null);
         rentalRepository.save(rental);
         // When
         List<Rental> rentals = rentalRepository.findAll();
@@ -95,8 +95,8 @@ public class RentalRepositoryTests {
         Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.now(), null);
         Renter savedRenter = renterRepository.save(renter);
 
-        Rental rentalActive = new Rental(null, equipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
-        Rental rentalCompleted = new Rental(null, equipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(3), null, RentalStatus.COMPLETED, new BigDecimal("15.00"), LocalDateTime.now(), null);
+        Rental rentalActive = new Rental(null, equipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), CurrencyCode.PLN, LocalDateTime.now(), null);
+        Rental rentalCompleted = new Rental(null, equipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(3), null, RentalStatus.COMPLETED, new BigDecimal("15.00"), CurrencyCode.PLN, LocalDateTime.now(), null);
 
         rentalRepository.save(rentalActive);
         rentalRepository.save(rentalCompleted);
@@ -119,7 +119,7 @@ public class RentalRepositoryTests {
         Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.now(), null);
         Renter savedRenter = renterRepository.save(renter);
 
-        Rental rental = new Rental(null, equipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
+        Rental rental = new Rental(null, equipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), CurrencyCode.PLN, LocalDateTime.now(), null);
         Rental savedRental = rentalRepository.save(rental);
         // When
         Optional<Rental> foundRental = rentalRepository.findById(savedRental.getId());
@@ -138,7 +138,7 @@ public class RentalRepositoryTests {
         Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.now(), null);
         Renter savedRenter = renterRepository.save(renter);
 
-        Rental rental = new Rental(null, equipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
+        Rental rental = new Rental(null, equipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), CurrencyCode.PLN, LocalDateTime.now(), null);
 
         rentalRepository.save(rental);
         // When
@@ -160,7 +160,7 @@ public class RentalRepositoryTests {
         Renter savedRenter = renterRepository.save(renter);
         Long savedRenterId = savedRenter.getId();
 
-        Rental rental = new Rental(null, savedEquipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
+        Rental rental = new Rental(null, savedEquipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), CurrencyCode.PLN, LocalDateTime.now(), null);
         Rental savedRental = rentalRepository.save(rental);
         Long savedRentalId = savedRental.getId();
         // When
@@ -180,7 +180,7 @@ public class RentalRepositoryTests {
         Renter renter = new Renter(null, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.now(), null);
         Renter savedRenter = renterRepository.save(renter);
 
-        Rental rental = new Rental(null, savedEquipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
+        Rental rental = new Rental(null, savedEquipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), CurrencyCode.PLN, LocalDateTime.now(), null);
         Rental savedRental = rentalRepository.save(rental);
         Long savedRentalId = savedRental.getId();
         // When
@@ -199,9 +199,9 @@ public class RentalRepositoryTests {
         Renter renter = new Renter(null, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.now(), null);
         Renter savedRenter = renterRepository.save(renter);
 
-        Rental rental1 = new Rental(null, savedEquipment, savedRenter, LocalDateTime.of(2024, 9, 27, 12, 0, 0), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
-        Rental rental2 = new Rental(null, savedEquipment, savedRenter, LocalDateTime.of(2024, 10, 27, 12, 0, 0), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
-        Rental rental3 = new Rental(null, savedEquipment, savedRenter, LocalDateTime.of(2024, 11, 27, 12, 0, 0), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
+        Rental rental1 = new Rental(null, savedEquipment, savedRenter, LocalDateTime.of(2024, 9, 27, 12, 0, 0), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), CurrencyCode.PLN, LocalDateTime.now(), null);
+        Rental rental2 = new Rental(null, savedEquipment, savedRenter, LocalDateTime.of(2024, 10, 27, 12, 0, 0), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), CurrencyCode.PLN, LocalDateTime.now(), null);
+        Rental rental3 = new Rental(null, savedEquipment, savedRenter, LocalDateTime.of(2024, 11, 27, 12, 0, 0), LocalDateTime.now().plusHours(2), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), CurrencyCode.PLN, LocalDateTime.now(), null);
         rentalRepository.save(rental1);
         rentalRepository.save(rental2);
         rentalRepository.save(rental3);
@@ -221,9 +221,9 @@ public class RentalRepositoryTests {
         Renter renter = new Renter(null, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.now(), null);
         Renter savedRenter = renterRepository.save(renter);
 
-        Rental rental1 = new Rental(null, savedEquipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), LocalDateTime.of(2024, 9, 27, 12, 0, 0), RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
-        Rental rental2 = new Rental(null, savedEquipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), LocalDateTime.of(2024, 10, 27, 12, 0, 0), RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
-        Rental rental3 = new Rental(null, savedEquipment, savedRenter, LocalDateTime.now(), LocalDateTime.of(2024, 11, 27, 12, 0, 0), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
+        Rental rental1 = new Rental(null, savedEquipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), LocalDateTime.of(2024, 9, 27, 12, 0, 0), RentalStatus.ACTIVE, new BigDecimal("10.00"), CurrencyCode.PLN, LocalDateTime.now(), null);
+        Rental rental2 = new Rental(null, savedEquipment, savedRenter, LocalDateTime.now(), LocalDateTime.now().plusHours(2), LocalDateTime.of(2024, 10, 27, 12, 0, 0), RentalStatus.ACTIVE, new BigDecimal("10.00"), CurrencyCode.PLN,  LocalDateTime.now(), null);
+        Rental rental3 = new Rental(null, savedEquipment, savedRenter, LocalDateTime.now(), LocalDateTime.of(2024, 11, 27, 12, 0, 0), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), CurrencyCode.PLN, LocalDateTime.now(), null);
         rentalRepository.save(rental1);
         rentalRepository.save(rental2);
         rentalRepository.save(rental3);
@@ -243,9 +243,9 @@ public class RentalRepositoryTests {
         Renter renter = new Renter(null, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.now(), null);
         Renter savedRenter = renterRepository.save(renter);
 
-        Rental rental1 = new Rental(null, savedEquipment, savedRenter, LocalDateTime.now(), LocalDateTime.of(2024, 11, 27, 12, 0, 0), LocalDateTime.of(2024, 12, 27, 12, 0, 0), RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
-        Rental rental2 = new Rental(null, savedEquipment, savedRenter, LocalDateTime.now(), LocalDateTime.of(2024, 11, 26, 12, 0, 0), LocalDateTime.of(2024, 12, 27, 12, 0, 0), RentalStatus.COMPLETED, new BigDecimal("10.00"), LocalDateTime.now(), null);
-        Rental rental3 = new Rental(null, savedEquipment, savedRenter, LocalDateTime.now(), LocalDateTime.of(2024, 11, 26, 12, 0, 0), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.now(), null);
+        Rental rental1 = new Rental(null, savedEquipment, savedRenter, LocalDateTime.now(), LocalDateTime.of(2024, 11, 27, 12, 0, 0), LocalDateTime.of(2024, 12, 27, 12, 0, 0), RentalStatus.ACTIVE, new BigDecimal("10.00"), CurrencyCode.PLN, LocalDateTime.now(), null);
+        Rental rental2 = new Rental(null, savedEquipment, savedRenter, LocalDateTime.now(), LocalDateTime.of(2024, 11, 26, 12, 0, 0), LocalDateTime.of(2024, 12, 27, 12, 0, 0), RentalStatus.COMPLETED, new BigDecimal("10.00"), CurrencyCode.PLN, LocalDateTime.now(), null);
+        Rental rental3 = new Rental(null, savedEquipment, savedRenter, LocalDateTime.now(), LocalDateTime.of(2024, 11, 26, 12, 0, 0), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), CurrencyCode.PLN, LocalDateTime.now(), null);
         rentalRepository.save(rental1);
         rentalRepository.save(rental2);
         rentalRepository.save(rental3);

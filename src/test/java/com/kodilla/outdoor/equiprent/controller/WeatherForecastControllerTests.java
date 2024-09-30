@@ -1,7 +1,7 @@
 package com.kodilla.outdoor.equiprent.controller;
 
 import com.kodilla.outdoor.equiprent.dto.WeatherMapDto;
-import com.kodilla.outdoor.equiprent.open.weather.map.client.OpenWeatherMapClient;
+import com.kodilla.outdoor.equiprent.external.open.weather.map.client.OpenWeatherMapClient;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

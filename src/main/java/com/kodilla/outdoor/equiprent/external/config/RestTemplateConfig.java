@@ -1,6 +1,6 @@
-package com.kodilla.outdoor.equiprent.open.weather.map.config;
+package com.kodilla.outdoor.equiprent.external.config;
 
-import com.kodilla.outdoor.equiprent.open.weather.map.interceptor.logging.LoggingClientHttpRequestInterceptor;
+import com.kodilla.outdoor.equiprent.external.interceptor.logging.LoggingClientHttpRequestInterceptor;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

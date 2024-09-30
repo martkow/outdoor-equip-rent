@@ -1,4 +1,4 @@
-package com.kodilla.outdoor.equiprent.open.weather.map.interceptor.logging;
+package com.kodilla.outdoor.equiprent.external.interceptor.logging;
 
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

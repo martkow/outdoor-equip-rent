@@ -1,5 +1,6 @@
 package com.kodilla.outdoor.equiprent.dto;
 
+import com.kodilla.outdoor.equiprent.domain.CurrencyCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,4 +24,6 @@ public class RentalDto {
     private String status;
     @Schema(description = "Total price of the rental", example = "200.11", required = true)
     private BigDecimal totalPrice;
+    @Schema(description = "Currency code of the price", example = "PL", required = true)
+    private String currencyCode;
 }

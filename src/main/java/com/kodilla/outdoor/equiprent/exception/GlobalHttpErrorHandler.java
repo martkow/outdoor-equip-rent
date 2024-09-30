@@ -3,9 +3,7 @@ package com.kodilla.outdoor.equiprent.exception;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -109,10 +107,24 @@ public class GlobalHttpErrorHandler extends ResponseEntityExceptionHandler {
         return new Error("ERROR", "report.does.not.exist", "Report with ID " + rnfe.getReportId() + " not found.");
     }
 
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    @ResponseBody
-//    @ExceptionHandler(ReportDownloadNotAvailableException.class)
-//    public Error handleReportDownloadNotAvailableException(ReportDownloadNotAvailableException rdnae) {
-//        return new Error("ERROR", "report.download.not.available", "Report with ID " + rdnae.getReportId() + " currently not available to download.");
-//    }
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    @ExceptionHandler(ReportDownloadNotAvailableException.class)
+    public Error handleReportDownloadNotAvailableException(ReportDownloadNotAvailableException rdnae) {
+        return new Error("ERROR", "report.download.not.available", "Report with ID " + rdnae.getReportId() + " currently not available to download.");
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    @ExceptionHandler(ExchangeRateNotAvailableException.class)
+    public Error handleExchangeRateNotAvailableException(ExchangeRateNotAvailableException ernae) {
+        return new Error("ERROR", "exchange.rate.not.available", "Exchange rate currently not available.");
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    @ExceptionHandler(CurrencyCodeNotFoundException.class)
+    public Error handleCurrencyCodeNotFoundException(CurrencyCodeNotFoundException ccnae) {
+        return new Error("ERROR", "currency.code.does.not.exist", "Currency code " + ccnae.getCurrencyCode() + " not found.");
+    }
 }

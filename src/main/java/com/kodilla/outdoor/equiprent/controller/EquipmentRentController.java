@@ -64,14 +64,13 @@ public class EquipmentRentController {
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<RentalDto> createRental(@RequestBody CreateRentalDto createRentalDto) throws EquipmentNotFoundException, EquipmentNotAvailableException, TierNotAvailableException, RenterNotFoundException {
+    public ResponseEntity<RentalDto> createRental(
+            @RequestBody CreateRentalDto createRentalDto,
+            @Parameter(description = "Currency code (PLN or EUR)", example = "PLN")
+            @RequestParam(defaultValue = "PLN") Optional<String> currencyCode) throws EquipmentNotFoundException, EquipmentNotAvailableException, TierNotAvailableException, RenterNotFoundException, ExchangeRateNotAvailableException, CurrencyCodeNotFoundException {
         return ResponseEntity.status(HttpStatus.CREATED).body(
-                rentalMapper.mapRentalToRentalDto(rentalService.createRental(
-                        createRentalDto.getEquipmentId(),
-                        createRentalDto.getRenterId(),
-                        createRentalDto.getRentalTierId(),
-                        createRentalDto.getRentalTierQuantity())
-                ));
+                rentalMapper.mapRentalToRentalDto(
+                        rentalService.createRental(createRentalDto, filterMapper.mapToCurrencyCodeOrThrow(currencyCode))));
     }
 
     @Operation(

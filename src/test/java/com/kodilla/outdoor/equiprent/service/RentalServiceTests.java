@@ -1,7 +1,10 @@
 package com.kodilla.outdoor.equiprent.service;
 
+import com.kodilla.outdoor.equiprent.dto.CreateRentalDto;
+import com.kodilla.outdoor.equiprent.dto.ExchangeRateDto;
 import com.kodilla.outdoor.equiprent.exception.*;
 import com.kodilla.outdoor.equiprent.domain.*;
+import com.kodilla.outdoor.equiprent.external.api.nbp.pl.client.ApiNbpPlClient;
 import com.kodilla.outdoor.equiprent.repository.EquipmentPriceRepository;
 import com.kodilla.outdoor.equiprent.repository.EquipmentRepository;
 import com.kodilla.outdoor.equiprent.repository.RentalRepository;
@@ -35,12 +38,16 @@ public class RentalServiceTests {
     private EquipmentPriceRepository equipmentPriceRepository;
     @Mock
     private RenterRepository renterRepository;
+    @Mock
+    private ApiNbpPlClient apiNbpPlClient;
     private Equipment equipment;
     private EquipmentAvailability equipmentAvailability;
     private EquipmentPrice equipmentPrice;
     private Renter renter;
+    private CreateRentalDto createRentalDto;
     private Rental rental;
     private Rental completedRental;
+    private ExchangeRateDto exchangeRateDto;
 
     @BeforeEach
     void setUp() {
@@ -50,25 +57,26 @@ public class RentalServiceTests {
         equipment.setEquipmentAvailability(equipmentAvailability);
         equipment.setPrices(List.of(equipmentPrice));
         renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 14, 0, 0), null);
-        rental = new Rental(1L, equipment, renter, LocalDateTime.of(2024, 9, 24, 12, 0, 0), LocalDateTime.of(2024, 9, 24, 14, 0, 0), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), LocalDateTime.of(2024, 9, 24, 13, 0, 0), null);
-        completedRental = new Rental(2L, equipment, renter, LocalDateTime.of(2024, 9, 24, 12, 0, 0), LocalDateTime.of(2024, 9, 24, 14, 0, 0), null, RentalStatus.COMPLETED, new BigDecimal("10.00"), LocalDateTime.of(2024, 9, 24, 13, 0, 0), null);
+        createRentalDto = new CreateRentalDto(equipment.getId(), renter.getId(), 1L, 10);
+        rental = new Rental(1L, equipment, renter, LocalDateTime.of(2024, 9, 24, 12, 0, 0), LocalDateTime.of(2024, 9, 24, 14, 0, 0), null, RentalStatus.ACTIVE, new BigDecimal("10.00"), CurrencyCode.PLN, LocalDateTime.of(2024, 9, 24, 13, 0, 0), null);
+        completedRental = new Rental(2L, equipment, renter, LocalDateTime.of(2024, 9, 24, 12, 0, 0), LocalDateTime.of(2024, 9, 24, 14, 0, 0), null, RentalStatus.COMPLETED, new BigDecimal("10.00"), CurrencyCode.PLN, LocalDateTime.of(2024, 9, 24, 13, 0, 0), null);
+        exchangeRateDto = new ExchangeRateDto("A", "euro","EUR", List.of(new ExchangeRateDto.Rate("exchangeRateNumber", "effectiveDate", 4.00)));
     }
 
     @Test
     @DisplayName("Test for creating a rental successfully")
-    void shouldCreateRental() throws RenterNotFoundException, TierNotAvailableException, EquipmentNotFoundException, EquipmentNotAvailableException {
+    void shouldCreateRental() throws RenterNotFoundException, TierNotAvailableException, EquipmentNotFoundException, EquipmentNotAvailableException, ExchangeRateNotAvailableException {
         // Given
         Long equipmentId = equipment.getId();
         Long renterId = renter.getId();
         Long rentalTierId = equipmentPrice.getId();
-        int rentalTierQuantity = 2;
 
         Mockito.when(equipmentRepository.findById(equipmentId)).thenReturn(java.util.Optional.of(equipment));
         Mockito.when(equipmentPriceRepository.findById(rentalTierId)).thenReturn(java.util.Optional.of(equipmentPrice));
         Mockito.when(renterRepository.findById(renterId)).thenReturn(java.util.Optional.of(renter));
         Mockito.when(rentalRepository.save(Mockito.any(Rental.class))).thenAnswer(invocation -> invocation.getArgument(0));
         // When
-        Rental result = rentalService.createRental(equipmentId, renterId, rentalTierId, rentalTierQuantity);
+        Rental result = rentalService.createRental(createRentalDto, CurrencyCode.PLN);
         // Then
         Assertions.assertNotNull(result);
         Assertions.assertEquals(equipment, result.getEquipment());
@@ -77,6 +85,7 @@ public class RentalServiceTests {
         Assertions.assertNotNull(result.getRentalEnd());
         Assertions.assertEquals(RentalStatus.ACTIVE, result.getStatus());
         Assertions.assertNotNull(result.getTotalPrice());
+        Assertions.assertEquals(CurrencyCode.PLN, result.getCurrencyCode());
         Assertions.assertNotNull(result.getCreationDate());
         Assertions.assertEquals(4L, equipment.getEquipmentAvailability().getCurrentQuantity());
     }
@@ -86,13 +95,10 @@ public class RentalServiceTests {
     void shouldThrowEquipmentNotFoundExceptionWhenEquipmentDoesNotExist() {
         // Given
         Long equipmentId = 1L;
-        Long renterId = 1L;
-        Long rentalTierId = 1L;
-        Integer rentalTierQuantity = 1;
 
         Mockito.when(equipmentRepository.findById(equipmentId)).thenReturn(java.util.Optional.empty());
         // When & Then
-        Assertions.assertThrows(EquipmentNotFoundException.class, () -> rentalService.createRental(equipmentId, renterId, rentalTierId, rentalTierQuantity));
+        Assertions.assertThrows(EquipmentNotFoundException.class, () -> rentalService.createRental(createRentalDto, CurrencyCode.PLN));
     }
 
     @Test
@@ -100,14 +106,11 @@ public class RentalServiceTests {
     void shouldThrowEquipmentNotAvailableExceptionWhenEquipmentIsNotAvailable() {
         // Given
         Long equipmentId = equipment.getId();
-        Long renterId = 1L;
-        Long rentalTierId = equipmentPrice.getId();
-        Integer rentalTierQuantity = 1;
 
         Mockito.when(equipmentRepository.findById(equipmentId)).thenReturn(java.util.Optional.of(equipment));
         equipment.getEquipmentAvailability().setAvailable(false);
         // When & Then
-        Assertions.assertThrows(EquipmentNotAvailableException.class, () -> rentalService.createRental(equipmentId, renterId, rentalTierId, rentalTierQuantity));
+        Assertions.assertThrows(EquipmentNotAvailableException.class, () -> rentalService.createRental(createRentalDto, CurrencyCode.PLN));
     }
 
     @Test
@@ -115,14 +118,12 @@ public class RentalServiceTests {
     void shouldThrowTierNotAvailableExceptionWhenRentalTierDoesNotExist() {
         // Given
         Long equipmentId = equipment.getId();
-        Long renterId = 1L;
         Long rentalTierId = 1L;
-        Integer rentalTierQuantity = 1;
 
         Mockito.when(equipmentRepository.findById(equipmentId)).thenReturn(java.util.Optional.of(equipment));
         Mockito.when(equipmentPriceRepository.findById(rentalTierId)).thenReturn(java.util.Optional.empty());
         // When & Then
-        Assertions.assertThrows(TierNotAvailableException.class, () -> rentalService.createRental(equipmentId, renterId, rentalTierId, rentalTierQuantity));
+        Assertions.assertThrows(TierNotAvailableException.class, () -> rentalService.createRental(createRentalDto, CurrencyCode.PLN));
     }
 
     @Test
@@ -132,13 +133,12 @@ public class RentalServiceTests {
         Long equipmentId = equipment.getId();
         Long renterId = 1L;
         Long rentalTierId = equipmentPrice.getId();
-        Integer rentalTierQuantity = 1;
 
         Mockito.when(equipmentRepository.findById(equipmentId)).thenReturn(java.util.Optional.of(equipment));
         Mockito.when(equipmentPriceRepository.findById(rentalTierId)).thenReturn(java.util.Optional.of(equipmentPrice));
         Mockito.when(renterRepository.findById(renterId)).thenReturn(java.util.Optional.empty());
         // When & Then
-        Assertions.assertThrows(RenterNotFoundException.class, () -> rentalService.createRental(equipmentId, renterId, rentalTierId, rentalTierQuantity));
+        Assertions.assertThrows(RenterNotFoundException.class, () -> rentalService.createRental(createRentalDto, CurrencyCode.PLN));
     }
 
     @Test
@@ -236,17 +236,34 @@ public class RentalServiceTests {
     }
 
     @Test
-    @DisplayName("Test for calculating rental total price")
-    void shouldDirectlyCalculateRentalTotalPrice() throws Exception {
+    @DisplayName("Test for calculating rental total price in PLN")
+    void shouldDirectlyCalculateRentalTotalPriceInPln() throws Exception {
         // Given
         int rentalTierQuantity = 4;
 
-        Method method = RentalService.class.getDeclaredMethod("calculateRentalTotalPrice", EquipmentPrice.class, Integer.class);
+        Method method = RentalService.class.getDeclaredMethod("calculateRentalTotalPrice", EquipmentPrice.class, Integer.class, CurrencyCode.class);
         method.setAccessible(true);
         // When
-        BigDecimal result = (BigDecimal) method.invoke(rentalService, equipmentPrice, rentalTierQuantity);
+        BigDecimal result = (BigDecimal) method.invoke(rentalService, equipmentPrice, rentalTierQuantity, CurrencyCode.PLN);
         // Then
         Assertions.assertNotNull(result);
         Assertions.assertEquals(new BigDecimal("4.00"), result);
+    }
+
+    @Test
+    @DisplayName("Test for calculating rental total price in EUR")
+    void shouldDirectlyCalculateRentalTotalPriceInEur() throws Exception {
+        // Given
+        int rentalTierQuantity = 4;
+
+        Mockito.when(apiNbpPlClient.getEuroExchangeRate()).thenReturn(exchangeRateDto);
+
+        Method method = RentalService.class.getDeclaredMethod("calculateRentalTotalPrice", EquipmentPrice.class, Integer.class, CurrencyCode.class);
+        method.setAccessible(true);
+        // When
+        BigDecimal result = (BigDecimal) method.invoke(rentalService, equipmentPrice, rentalTierQuantity, CurrencyCode.EUR);
+        // Then
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(new BigDecimal("1.0000"), result);
     }
 }

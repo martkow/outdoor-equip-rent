@@ -16,7 +16,8 @@ public class RentalMapper {
                rental.getRentalStart().toString(),
                rental.getRentalEnd().toString(),
                rental.getStatus().toString(),
-               rental.getTotalPrice()
+               rental.getTotalPrice(),
+               rental.getCurrencyCode().toString()
        );
    }
 

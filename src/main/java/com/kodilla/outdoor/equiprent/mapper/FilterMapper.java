@@ -1,6 +1,8 @@
 package com.kodilla.outdoor.equiprent.mapper;
 
+import com.kodilla.outdoor.equiprent.domain.CurrencyCode;
 import com.kodilla.outdoor.equiprent.exception.CategoryNotFoundException;
+import com.kodilla.outdoor.equiprent.exception.CurrencyCodeNotFoundException;
 import com.kodilla.outdoor.equiprent.exception.RentalStatusNotFoundException;
 import com.kodilla.outdoor.equiprent.domain.EquipmentCategory;
 import com.kodilla.outdoor.equiprent.domain.RentalStatus;
@@ -51,9 +53,17 @@ public class FilterMapper {
 
     public RentalStatus mapToStatusOrThrow(String status) throws RentalStatusNotFoundException {
         try {
-            return RentalStatus.valueOf(status);
+            return RentalStatus.valueOf(status.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new RentalStatusNotFoundException(status);
+        }
+    }
+
+    public CurrencyCode mapToCurrencyCodeOrThrow(Optional<String> currencyCode) throws CurrencyCodeNotFoundException {
+        try {
+            return currencyCode.map(s -> CurrencyCode.valueOf(s.toUpperCase())).orElse(CurrencyCode.PLN);
+        } catch (IllegalArgumentException e) {
+            throw new CurrencyCodeNotFoundException(currencyCode.get());
         }
     }
 }

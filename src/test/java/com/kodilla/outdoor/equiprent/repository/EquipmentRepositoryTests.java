@@ -181,7 +181,7 @@ public class EquipmentRepositoryTests {
         Renter renter = new Renter(null, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 14, 0, 0), null);
         Renter savedRenter = renterRepository.save(renter);
 
-        Rental rental = new Rental(null, savedEquipment, savedRenter, LocalDateTime.of(2024, 9, 24, 13, 0, 0), LocalDateTime.of(2024, 9, 24, 14, 0, 0), null, RentalStatus.ACTIVE, new BigDecimal("11.11"), LocalDateTime.of(2024, 9, 24, 13, 0, 0), null);
+        Rental rental = new Rental(null, savedEquipment, savedRenter, LocalDateTime.of(2024, 9, 24, 13, 0, 0), LocalDateTime.of(2024, 9, 24, 14, 0, 0), null, RentalStatus.ACTIVE, new BigDecimal("11.11"), CurrencyCode.PLN, LocalDateTime.of(2024, 9, 24, 13, 0, 0), null);
         rentalRepository.save(rental);
         // When & Then
         Assertions.assertThrows(org.hibernate.exception.ConstraintViolationException.class, () -> {equipmentRepository.deleteById(savedEquipmentId); entityManager.flush();});

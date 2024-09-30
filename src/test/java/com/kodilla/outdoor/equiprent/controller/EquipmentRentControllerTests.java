@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @DisplayName("Tests for EquipmentRentController class")
 @SpringJUnitWebConfig
@@ -38,17 +39,18 @@ public class EquipmentRentControllerTests {
     @MockBean
     private FilterMapper filterMapper;
 
-    @DisplayName("Test case for creating a rental")
+    @DisplayName("Test case for creating a rental with currencyCode being empty")
     @Test
     void shouldCreateRental() throws Exception {
         // Given
         Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 14, 0, 0), null);
         CreateRentalDto createRentalDto = new CreateRentalDto(1L, 1L, 2L, 3);
         Equipment equipment = new Equipment(1L, "Tent Plus", "Camping tent", EquipmentCategory.TENT, null, null, LocalDateTime.of(2024, 9, 24, 13, 0, 0));
-        Rental rental = new Rental(1L, equipment, renter, LocalDateTime.of(2024, 9, 21, 12, 0, 0), LocalDateTime.of(2024, 9, 21, 15, 0, 0), null, RentalStatus.ACTIVE, new BigDecimal("211.11"), LocalDateTime.of(2024, 9, 21, 12, 0, 0), null);
-        RentalDto rentalDto = new RentalDto(1L, 1L, 1L, "2023-09-21T12:00:00", "2023-09-21T15:00:00", "ACTIVE", new BigDecimal("211.11"));
+        Rental rental = new Rental(1L, equipment, renter, LocalDateTime.of(2024, 9, 21, 12, 0, 0), LocalDateTime.of(2024, 9, 21, 15, 0, 0), null, RentalStatus.ACTIVE, new BigDecimal("211.11"), CurrencyCode.PLN, LocalDateTime.of(2024, 9, 21, 12, 0, 0), null);
+        RentalDto rentalDto = new RentalDto(1L, 1L, 1L, "2023-09-21T12:00:00", "2023-09-21T15:00:00", "ACTIVE", new BigDecimal("211.11"), "PLN");
 
-        Mockito.when(rentalService.createRental(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(rental);
+        Mockito.when(rentalService.createRental(Mockito.any(), Mockito.any())).thenReturn(rental);
+        Mockito.when(filterMapper.mapToCurrencyCodeOrThrow(Optional.empty())).thenReturn(CurrencyCode.PLN);
         Mockito.when(rentalMapper.mapRentalToRentalDto(rental)).thenReturn(rentalDto);
 
         Gson gson = new Gson();
@@ -66,7 +68,86 @@ public class EquipmentRentControllerTests {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.rentalStart", Matchers.is("2023-09-21T12:00:00")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.rentalEnd", Matchers.is("2023-09-21T15:00:00")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status", Matchers.is("ACTIVE")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.totalPrice", Matchers.is(211.11)));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalPrice", Matchers.is(211.11)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.currencyCode", Matchers.is("PLN")));
+    }
+
+    @DisplayName("Test case for creating a rental with currencyCode equals EUR")
+    @Test
+    void shouldCreateRentalInEuro() throws Exception {
+        // Given
+        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 14, 0, 0), null);
+        CreateRentalDto createRentalDto = new CreateRentalDto(1L, 1L, 2L, 3);
+        Equipment equipment = new Equipment(1L, "Tent Plus", "Camping tent", EquipmentCategory.TENT, null, null, LocalDateTime.of(2024, 9, 24, 13, 0, 0));
+        Rental rental = new Rental(1L, equipment, renter, LocalDateTime.of(2024, 9, 21, 12, 0, 0), LocalDateTime.of(2024, 9, 21, 15, 0, 0), null, RentalStatus.ACTIVE, new BigDecimal("211.11"), CurrencyCode.EUR, LocalDateTime.of(2024, 9, 21, 12, 0, 0), null);
+        RentalDto rentalDto = new RentalDto(1L, 1L, 1L, "2023-09-21T12:00:00", "2023-09-21T15:00:00", "ACTIVE", new BigDecimal("211.11"), "EUR");
+
+        Mockito.when(rentalService.createRental(Mockito.any(), Mockito.any())).thenReturn(rental);
+        Mockito.when(filterMapper.mapToCurrencyCodeOrThrow(Optional.of("EUR"))).thenReturn(CurrencyCode.EUR);
+        Mockito.when(rentalMapper.mapRentalToRentalDto(rental)).thenReturn(rentalDto);
+
+        Gson gson = new Gson();
+        String jsonContent = gson.toJson(createRentalDto);
+        // When & Then
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/rentals?currencyCode=EUR")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+                        .content(jsonContent)
+                )
+                .andExpect(MockMvcResultMatchers.status().is(201))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.equipmentId", Matchers.is(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.renterId", Matchers.is(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.rentalStart", Matchers.is("2023-09-21T12:00:00")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.rentalEnd", Matchers.is("2023-09-21T15:00:00")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status", Matchers.is("ACTIVE")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalPrice", Matchers.is(211.11)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.currencyCode", Matchers.is("EUR")));
+    }
+
+    @DisplayName("Test case for handling CurrencyNotFoundException when creating a rental")
+    @Test
+    void shouldHandleCurrencyNotFoundException() throws Exception {
+        // Given
+        CreateRentalDto createRentalDto = new CreateRentalDto(1L, 1L, 2L, 3);
+
+        Mockito.when(filterMapper.mapToCurrencyCodeOrThrow(Mockito.any())).thenThrow(new CurrencyCodeNotFoundException("UNKNOWN"));
+
+        Gson gson = new Gson();
+        String jsonContent = gson.toJson(createRentalDto);
+        // When & Then
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/rentals?currencyCode=UNKNOWN")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+                        .content(jsonContent)
+                )
+                .andExpect(MockMvcResultMatchers.status().is(400))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.level", Matchers.is("ERROR")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is("currency.code.does.not.exist")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.description", Matchers.is("Currency code UNKNOWN not found.")));
+    }
+
+    @DisplayName("Test case for handling ExchangeRateNotAvailableException when creating a rental")
+    @Test
+    void shouldHandleExchangeRateNotAvailableException() throws Exception {
+        // Given
+        CreateRentalDto createRentalDto = new CreateRentalDto(1L, 1L, 2L, 3);
+
+        Mockito.when(filterMapper.mapToCurrencyCodeOrThrow(Mockito.any())).thenReturn(CurrencyCode.EUR);
+        Mockito.when(rentalService.createRental(Mockito.any(), Mockito.any())).thenThrow(new ExchangeRateNotAvailableException());
+
+        Gson gson = new Gson();
+        String jsonContent = gson.toJson(createRentalDto);
+        // When & Then
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/rentals?currencyCode=EUR")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+                        .content(jsonContent)
+                )
+                .andExpect(MockMvcResultMatchers.status().is(400))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.level", Matchers.is("ERROR")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is("exchange.rate.not.available")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.description", Matchers.is("Exchange rate currently not available.")));
     }
 
     @DisplayName("Test case for handling EquipmentNotFoundException when creating a rental")
@@ -75,7 +156,8 @@ public class EquipmentRentControllerTests {
         // Given
         CreateRentalDto createRentalDto = new CreateRentalDto(1L, 1L, 2L, 3);
 
-        Mockito.when(rentalService.createRental(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any())).thenThrow(new EquipmentNotFoundException(1L));
+        Mockito.when(rentalService.createRental(Mockito.any(), Mockito.any())).thenThrow(new EquipmentNotFoundException(1L));
+        Mockito.when(filterMapper.mapToCurrencyCodeOrThrow(Mockito.any())).thenReturn(CurrencyCode.PLN);
 
         Gson gson = new Gson();
         String jsonContent = gson.toJson(createRentalDto);
@@ -97,7 +179,8 @@ public class EquipmentRentControllerTests {
         // Given
         CreateRentalDto createRentalDto = new CreateRentalDto(1L, 1L, 2L, 3);
 
-        Mockito.when(rentalService.createRental(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any())).thenThrow(new EquipmentNotAvailableException(1L));
+        Mockito.when(rentalService.createRental(Mockito.any(), Mockito.any())).thenThrow(new EquipmentNotAvailableException(1L));
+        Mockito.when(filterMapper.mapToCurrencyCodeOrThrow(Mockito.any())).thenReturn(CurrencyCode.PLN);
 
         Gson gson = new Gson();
         String jsonContent = gson.toJson(createRentalDto);
@@ -119,7 +202,8 @@ public class EquipmentRentControllerTests {
         // Given
         CreateRentalDto createRentalDto = new CreateRentalDto(1L, 1L, 2L, 3);
 
-        Mockito.when(rentalService.createRental(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any())).thenThrow(new TierNotAvailableException(2L));
+        Mockito.when(rentalService.createRental(Mockito.any(), Mockito.any())).thenThrow(new TierNotAvailableException(2L));
+        Mockito.when(filterMapper.mapToCurrencyCodeOrThrow(Mockito.any())).thenReturn(CurrencyCode.PLN);
 
         Gson gson = new Gson();
         String jsonContent = gson.toJson(createRentalDto);
@@ -141,7 +225,8 @@ public class EquipmentRentControllerTests {
         // Given
         CreateRentalDto createRentalDto = new CreateRentalDto(1L, 1L, 2L, 3);
 
-        Mockito.when(rentalService.createRental(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any())).thenThrow(new RenterNotFoundException(1L));
+        Mockito.when(rentalService.createRental(Mockito.any(), Mockito.any())).thenThrow(new RenterNotFoundException(1L));
+        Mockito.when(filterMapper.mapToCurrencyCodeOrThrow(Mockito.any())).thenReturn(CurrencyCode.PLN);
 
         Gson gson = new Gson();
         String jsonContent = gson.toJson(createRentalDto);
@@ -163,8 +248,8 @@ public class EquipmentRentControllerTests {
         // Given
         Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 14, 0, 0), null);
         Equipment equipment = new Equipment(1L, "Tent Plus", "Camping tent", EquipmentCategory.TENT, null, null, LocalDateTime.of(2024, 9, 21, 15, 0, 0));
-        Rental rental = new Rental(1L, equipment, renter, LocalDateTime.of(2024, 9, 21, 12, 0, 0), LocalDateTime.of(2024, 9, 21, 15, 0, 0), null, RentalStatus.ACTIVE, new BigDecimal("211.11"), LocalDateTime.of(2024, 9, 21, 15, 0, 0), null);
-        RentalDto rentalDto = new RentalDto(1L, 1L, 1L, "2023-09-21T12:00:00", "2023-09-21T15:00:00", "ACTIVE", new BigDecimal("211.11"));
+        Rental rental = new Rental(1L, equipment, renter, LocalDateTime.of(2024, 9, 21, 12, 0, 0), LocalDateTime.of(2024, 9, 21, 15, 0, 0), null, RentalStatus.ACTIVE, new BigDecimal("211.11"), CurrencyCode.PLN, LocalDateTime.of(2024, 9, 21, 15, 0, 0), null);
+        RentalDto rentalDto = new RentalDto(1L, 1L, 1L, "2023-09-21T12:00:00", "2023-09-21T15:00:00", "ACTIVE", new BigDecimal("211.11"), "PLN");
 
         Mockito.when(rentalService.getRentalByStatuses(List.of())).thenReturn(List.of(rental));
         Mockito.when(rentalMapper.mapRentalListToRentalDtoList(List.of(rental))).thenReturn(List.of(rentalDto));
@@ -179,7 +264,8 @@ public class EquipmentRentControllerTests {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].rentalStart", Matchers.is("2023-09-21T12:00:00")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].rentalEnd", Matchers.is("2023-09-21T15:00:00")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].status", Matchers.is("ACTIVE")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].totalPrice", Matchers.is(211.11)));
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].totalPrice", Matchers.is(211.11)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].currencyCode", Matchers.is("PLN")));
     }
 
     @DisplayName("Test case for fetching rentals by status")
@@ -187,9 +273,9 @@ public class EquipmentRentControllerTests {
     void shouldFetchRentalsByStatus() throws Exception {
         // Given
         Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 14, 0, 0), null);
-        RentalDto rentalDto = new RentalDto(1L, 1L, 1L, "2023-09-21T12:00:00", "2023-09-21T15:00:00", "ACTIVE", new BigDecimal("211.11"));
+        RentalDto rentalDto = new RentalDto(1L, 1L, 1L, "2023-09-21T12:00:00", "2023-09-21T15:00:00", "ACTIVE", new BigDecimal("211.11"), "PLN");
         Equipment equipment = new Equipment(1L, "Tent Plus", "Camping tent", EquipmentCategory.TENT, null, null, LocalDateTime.of(2024, 9, 21, 15, 0, 0));
-        Rental rental = new Rental(1L, equipment, renter, LocalDateTime.of(2024, 9, 21, 12, 0, 0), LocalDateTime.of(2024, 9, 21, 15, 0, 0), null, RentalStatus.ACTIVE, new BigDecimal("211.11"), LocalDateTime.of(2024, 9, 21, 15, 0, 0), null);
+        Rental rental = new Rental(1L, equipment, renter, LocalDateTime.of(2024, 9, 21, 12, 0, 0), LocalDateTime.of(2024, 9, 21, 15, 0, 0), null, RentalStatus.ACTIVE, new BigDecimal("211.11"), CurrencyCode.PLN, LocalDateTime.of(2024, 9, 21, 15, 0, 0), null);
 
         Mockito.when(filterMapper.mapStringToRentalStatusList(Mockito.any())).thenReturn(List.of(RentalStatus.ACTIVE));
         Mockito.when(rentalService.getRentalByStatuses(Mockito.anyList())).thenReturn(List.of(rental));
@@ -204,7 +290,8 @@ public class EquipmentRentControllerTests {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].rentalStart", Matchers.is("2023-09-21T12:00:00")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].rentalEnd", Matchers.is("2023-09-21T15:00:00")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].status", Matchers.is("ACTIVE")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].totalPrice", Matchers.is(211.11)));
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].totalPrice", Matchers.is(211.11)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].currencyCode", Matchers.is("PLN")));
     }
 
     @DisplayName("Test case for handling RentalStatusNotFoundException")
@@ -226,9 +313,9 @@ public class EquipmentRentControllerTests {
     void shouldUpdateRentalStatusToCompleted() throws Exception {
         // Given
         Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 14, 0, 0), null);
-        RentalDto rentalDto = new RentalDto(1L, 1L, 1L, "2023-09-21T12:00:00", "2023-09-21T15:00:00", "COMPLETED", new BigDecimal("211.11"));
+        RentalDto rentalDto = new RentalDto(1L, 1L, 1L, "2023-09-21T12:00:00", "2023-09-21T15:00:00", "COMPLETED", new BigDecimal("211.11"), "PLN");
         Equipment equipment = new Equipment(1L, "Tent Plus", "Camping tent", EquipmentCategory.TENT, null, null, LocalDateTime.of(2024, 9, 21, 15, 0, 0));
-        Rental rental = new Rental(1L, equipment, renter, LocalDateTime.of(2024, 9, 21, 12, 0, 0), LocalDateTime.of(2024, 9, 21, 15, 0, 0), null, RentalStatus.COMPLETED, new BigDecimal("211.11"), LocalDateTime.of(2024, 9, 21, 15, 0, 0), LocalDateTime.of(2024, 9, 21, 16, 0, 0));
+        Rental rental = new Rental(1L, equipment, renter, LocalDateTime.of(2024, 9, 21, 12, 0, 0), LocalDateTime.of(2024, 9, 21, 15, 0, 0), null, RentalStatus.COMPLETED, new BigDecimal("211.11"), CurrencyCode.PLN, LocalDateTime.of(2024, 9, 21, 15, 0, 0), LocalDateTime.of(2024, 9, 21, 16, 0, 0));
 
         Mockito.when(rentalService.updateRentalStatus(1L, RentalStatus.COMPLETED)).thenReturn(rental);
         Mockito.when(rentalMapper.mapRentalToRentalDto(Mockito.any())).thenReturn(rentalDto);
@@ -242,7 +329,9 @@ public class EquipmentRentControllerTests {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.rentalStart", Matchers.is("2023-09-21T12:00:00")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.rentalEnd", Matchers.is("2023-09-21T15:00:00")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status", Matchers.is("COMPLETED")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.totalPrice", Matchers.is(211.11)));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalPrice", Matchers.is(211.11)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.currencyCode", Matchers.is("PLN")));
+
     }
 
     @DisplayName("Test case for handling InvalidRentalStatusException when updating rental status")

@@ -1,4 +1,4 @@
-package com.kodilla.outdoor.equiprent.open.weather.map.config;
+package com.kodilla.outdoor.equiprent.external.open.weather.map.config;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;

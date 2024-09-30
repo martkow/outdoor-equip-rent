@@ -1,8 +1,8 @@
-package com.kodilla.outdoor.equiprent.open.weather.map.client;
+package com.kodilla.outdoor.equiprent.external.open.weather.map.client;
 
 import com.kodilla.outdoor.equiprent.exception.WeatherForecastNotAvailableException;
 import com.kodilla.outdoor.equiprent.dto.WeatherMapDto;
-import com.kodilla.outdoor.equiprent.open.weather.map.config.OpenWeatherMapConfig;
+import com.kodilla.outdoor.equiprent.external.open.weather.map.config.OpenWeatherMapConfig;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

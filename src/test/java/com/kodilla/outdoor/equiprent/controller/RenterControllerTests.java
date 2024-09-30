@@ -208,7 +208,7 @@ public class RenterControllerTests {
     void shouldGetRentalsByRenterId() throws Exception {
         // Given
         Long renterId = 1L;
-        RentalDto rentalDto = new RentalDto(1L, 2L, 3L, "2024-09-24T10:00:00", "2024-09-24T12:00:00", "ACTIVE", new BigDecimal("11.11"));
+        RentalDto rentalDto = new RentalDto(1L, 2L, 3L, "2024-09-24T10:00:00", "2024-09-24T12:00:00", "ACTIVE", new BigDecimal("11.11"), "PLN");
 
         Mockito.when(renterService.getRenter(renterId)).thenReturn(new Renter());
         Mockito.when(rentalService.getRentalsByRenterId(renterId)).thenReturn(List.of());

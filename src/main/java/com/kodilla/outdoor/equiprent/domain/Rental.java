@@ -33,6 +33,8 @@ public class Rental {
     private RentalStatus status;
     @Column(name = "TOTAL_PRICE", nullable = false)
     private BigDecimal totalPrice;
+    @Column(name = "CURRENCY_CODE", nullable = false)
+    private CurrencyCode currencyCode;
     @Column(name = "CREATION_DATE", nullable = false)
     private LocalDateTime creationDate;
     @Column(name = "MODIFICATION_DATE")

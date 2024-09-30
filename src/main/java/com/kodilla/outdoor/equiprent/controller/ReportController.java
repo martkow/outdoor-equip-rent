@@ -100,10 +100,17 @@ public class ReportController {
             headers.setContentDispositionFormData("attachment", "report_" + reportId + ".pdf");
 
             return new ResponseEntity<>(pdfContent, headers, HttpStatus.OK);
-        } catch (ReportNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(new GlobalHttpErrorHandler.Error("ERROR", "report.does.not.exist", "Report with ID " + e.getReportId() + " not found."));
+        } catch (Exception e) {
+            if (e instanceof ReportNotFoundException) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(new GlobalHttpErrorHandler.Error("ERROR", "report.does.not.exist", "Report with ID " + ((ReportNotFoundException) e).getReportId() + " not found."));
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(new GlobalHttpErrorHandler.Error("ERROR", "report.download.not.available", "Report with ID " + ((ReportDownloadNotAvailableException) e).getReportId() + " currently not available to download."));
+
+            }
         }
     }
 }

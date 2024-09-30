@@ -1,8 +1,9 @@
 package com.kodilla.outdoor.equiprent.service;
 
+import com.kodilla.outdoor.equiprent.dto.CreateRentalDto;
 import com.kodilla.outdoor.equiprent.exception.*;
 import com.kodilla.outdoor.equiprent.domain.*;
-import com.kodilla.outdoor.equiprent.exception.*;
+import com.kodilla.outdoor.equiprent.external.api.nbp.pl.client.ApiNbpPlClient;
 import com.kodilla.outdoor.equiprent.repository.EquipmentPriceRepository;
 import com.kodilla.outdoor.equiprent.repository.EquipmentRepository;
 import com.kodilla.outdoor.equiprent.repository.RentalRepository;
@@ -12,6 +13,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,27 +25,28 @@ public class RentalService {
     private final EquipmentRepository equipmentRepository;
     private final EquipmentPriceRepository equipmentPriceRepository;
     private final RenterRepository renterRepository;
+    private final ApiNbpPlClient apiNbpPlClient;
 
-    public Rental createRental(Long equipmentId, Long renterId, Long rentalTierId, Integer rentalTierQuantity) throws EquipmentNotFoundException, EquipmentNotAvailableException, TierNotAvailableException, RenterNotFoundException {
-        Equipment equipment = equipmentRepository.findById(equipmentId)
-                .orElseThrow(() -> new EquipmentNotFoundException(equipmentId));
+    public Rental createRental(CreateRentalDto createRentalDto, CurrencyCode currencyCode) throws EquipmentNotFoundException, EquipmentNotAvailableException, TierNotAvailableException, RenterNotFoundException, ExchangeRateNotAvailableException {
+        Equipment equipment = equipmentRepository.findById(createRentalDto.getEquipmentId())
+                .orElseThrow(() -> new EquipmentNotFoundException(createRentalDto.getEquipmentId()));
 
         if (!equipment.getEquipmentAvailability().isAvailable() || equipment.getEquipmentAvailability().getCurrentQuantity() <= 0) {
-            throw new EquipmentNotAvailableException(equipmentId);
+            throw new EquipmentNotAvailableException(createRentalDto.getEquipmentId());
         }
 
-        EquipmentPrice equipmentPrice = equipmentPriceRepository.findById(rentalTierId)
-                .orElseThrow(() -> new TierNotAvailableException(rentalTierId));
+        EquipmentPrice equipmentPrice = equipmentPriceRepository.findById(createRentalDto.getRentalTierId())
+                .orElseThrow(() -> new TierNotAvailableException(createRentalDto.getRentalTierId()));
 
         LocalDateTime rentalStart = LocalDateTime.now();
         LocalDateTime rentalEnd = switch (equipmentPrice.getTier()) {
-            case HOUR -> rentalStart.plusHours(rentalTierQuantity);
-            case DAY -> rentalStart.plusDays(rentalTierQuantity);
-            case WEEK -> rentalStart.plusWeeks(rentalTierQuantity);
+            case HOUR -> rentalStart.plusHours(createRentalDto.getRentalTierQuantity());
+            case DAY -> rentalStart.plusDays(createRentalDto.getRentalTierQuantity());
+            case WEEK -> rentalStart.plusWeeks(createRentalDto.getRentalTierQuantity());
         };
 
-        Renter renter = renterRepository.findById(renterId)
-                .orElseThrow(() -> new RenterNotFoundException(renterId));
+        Renter renter = renterRepository.findById(createRentalDto.getRenterId())
+                .orElseThrow(() -> new RenterNotFoundException(createRentalDto.getRenterId()));
 
         Rental rental = Rental.builder()
                 .equipment(equipment)
@@ -51,7 +54,8 @@ public class RentalService {
                 .rentalStart(rentalStart)
                 .rentalEnd(rentalEnd)
                 .status(RentalStatus.ACTIVE)
-                .totalPrice(calculateRentalTotalPrice(equipmentPrice, rentalTierQuantity))
+                .totalPrice(calculateRentalTotalPrice(equipmentPrice, createRentalDto.getRentalTierQuantity(), currencyCode))
+                .currencyCode(currencyCode)
                 .creationDate(LocalDateTime.now())
                 .build();
 
@@ -61,8 +65,14 @@ public class RentalService {
         return rentalRepository.save(rental);
     }
 
-    private BigDecimal calculateRentalTotalPrice(EquipmentPrice equipmentPrice, Integer rentalTierQuantity) {
-        return equipmentPrice.getPrice().multiply(new BigDecimal(rentalTierQuantity));
+    private BigDecimal calculateRentalTotalPrice(EquipmentPrice equipmentPrice, Integer rentalTierQuantity, CurrencyCode currencyCode) throws ExchangeRateNotAvailableException {
+        BigDecimal totalPriceInPln = equipmentPrice.getPrice().multiply(new BigDecimal(rentalTierQuantity));
+
+        if (currencyCode.equals(CurrencyCode.EUR)) {
+           return totalPriceInPln.divide(BigDecimal.valueOf(apiNbpPlClient.getEuroExchangeRate().getRates().get(0).getAverageExchangeRate()), 4, RoundingMode.HALF_UP);
+       }
+
+        return totalPriceInPln;
     }
 
     public List<Rental> getAllRentals() {

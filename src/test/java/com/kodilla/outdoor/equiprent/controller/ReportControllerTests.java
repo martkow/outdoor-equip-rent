@@ -1,6 +1,5 @@
 package com.kodilla.outdoor.equiprent.controller;
 
-import com.kodilla.outdoor.equiprent.domain.Report;
 import com.kodilla.outdoor.equiprent.dto.ReportDto;
 import com.kodilla.outdoor.equiprent.exception.ReportDownloadNotAvailableException;
 import com.kodilla.outdoor.equiprent.exception.ReportNotFoundException;
@@ -39,9 +38,7 @@ public class ReportControllerTests {
 
         Mockito.when(reportService.getReportsFromDate(Mockito.any())).thenReturn(List.of(reportDto));
         // When & Then
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/reports?fromDate=2024-09-27")
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/reports?fromDate=2024-09-27"))
                 .andExpect(MockMvcResultMatchers.status().is(200))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].id", Matchers.is(1)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].totalRentals", Matchers.is(5)))
@@ -59,9 +56,7 @@ public class ReportControllerTests {
 
         Mockito.when(reportService.getReportById(Mockito.anyLong())).thenReturn(reportDto);
         // When & Then
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/reports/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/reports/1"))
                 .andExpect(MockMvcResultMatchers.status().is(200))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(1)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.totalRentals", Matchers.is(5)))
@@ -77,9 +72,7 @@ public class ReportControllerTests {
         // Given
         Mockito.when(reportService.getReportById(Mockito.anyLong())).thenThrow(new ReportNotFoundException(1L));
         // When & Then
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/reports/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/reports/1"))
                 .andExpect(MockMvcResultMatchers.status().is(400))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.level", Matchers.is("ERROR")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is("report.does.not.exist")))
@@ -94,11 +87,10 @@ public class ReportControllerTests {
         Mockito.when(reportService.getReportAsByteArray(Mockito.anyLong())).thenReturn(pdfContent);
 
         // When & Then
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/reports/1/download")
-                        .contentType(MediaType.APPLICATION_PDF))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/reports/1/download"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE))
-                .andExpect(MockMvcResultMatchers.header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=report_1.pdf"))
+                .andExpect(MockMvcResultMatchers.header().string(HttpHeaders.CONTENT_DISPOSITION, "form-data; name=\"attachment\"; filename=\"report_1.pdf\""))
                 .andExpect(MockMvcResultMatchers.content().bytes(pdfContent));
     }
 
@@ -108,8 +100,7 @@ public class ReportControllerTests {
         // Given
         Mockito.when(reportService.getReportAsByteArray(Mockito.anyLong())).thenThrow(new ReportNotFoundException(1L));
         // When & Then
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/reports/1/download")
-                        .contentType(MediaType.APPLICATION_PDF))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/reports/1/download"))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.level", Matchers.is("ERROR")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is("report.does.not.exist")))
@@ -122,8 +113,7 @@ public class ReportControllerTests {
         // Given
         Mockito.when(reportService.getReportAsByteArray(Mockito.anyLong())).thenThrow(new ReportDownloadNotAvailableException(1L));
         // When & Then
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/reports/1/download")
-                        .contentType(MediaType.APPLICATION_PDF))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/reports/1/download"))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.level", Matchers.is("ERROR")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is("report.download.not.available")))
