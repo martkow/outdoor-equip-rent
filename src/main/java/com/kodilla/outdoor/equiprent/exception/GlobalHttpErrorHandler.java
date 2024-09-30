@@ -3,7 +3,9 @@ package com.kodilla.outdoor.equiprent.exception;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -99,4 +101,18 @@ public class GlobalHttpErrorHandler extends ResponseEntityExceptionHandler {
     public Error handleRenterAlreadyExistsException(RenterAlreadyExistsException raee) {
         return new Error("ERROR", "renter.already.exists", "Renter with email " + raee.getEmail() + " already exists.");
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    @ExceptionHandler(ReportNotFoundException.class)
+    public Error handleReportNotFoundException(ReportNotFoundException rnfe) {
+        return new Error("ERROR", "report.does.not.exist", "Report with ID " + rnfe.getReportId() + " not found.");
+    }
+
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    @ResponseBody
+//    @ExceptionHandler(ReportDownloadNotAvailableException.class)
+//    public Error handleReportDownloadNotAvailableException(ReportDownloadNotAvailableException rdnae) {
+//        return new Error("ERROR", "report.download.not.available", "Report with ID " + rdnae.getReportId() + " currently not available to download.");
+//    }
 }

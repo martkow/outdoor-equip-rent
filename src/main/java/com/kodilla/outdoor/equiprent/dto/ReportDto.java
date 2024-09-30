@@ -1,9 +1,7 @@
 package com.kodilla.outdoor.equiprent.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -11,6 +9,13 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 public class ReportDto {
+    public static final String REPORT_TITLE = "Daily report";
+    public static final String TOTAL_RENTALS = "Total number of rentals";
+    public static final String TOTAL_RETURNS = "Total number of returns";
+    public static final String OVERDUE_RENTALS = "Total number of overdue rentals";
+    public static final String START_DATE = "Start date";
+    public static final String END_DATE = "End date";
+
     @Schema(description = "Unique identifier of the report", example = "1")
     private Long id;
     @Schema(description = "Total number of rentals during the report period", example = "15", required = true)
