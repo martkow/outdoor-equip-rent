@@ -1,9 +1,11 @@
 package com.kodilla.outdoor.equiprent.service;
 
 import com.kodilla.outdoor.equiprent.dto.CreateRentalDto;
+import com.kodilla.outdoor.equiprent.dto.Invoice;
 import com.kodilla.outdoor.equiprent.exception.*;
 import com.kodilla.outdoor.equiprent.domain.*;
 import com.kodilla.outdoor.equiprent.external.api.nbp.pl.client.ApiNbpPlClient;
+import com.kodilla.outdoor.equiprent.mapper.RentalMapper;
 import com.kodilla.outdoor.equiprent.repository.EquipmentPriceRepository;
 import com.kodilla.outdoor.equiprent.repository.EquipmentRepository;
 import com.kodilla.outdoor.equiprent.repository.RentalRepository;
@@ -12,6 +14,7 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
@@ -26,6 +29,8 @@ public class RentalService {
     private final EquipmentPriceRepository equipmentPriceRepository;
     private final RenterRepository renterRepository;
     private final ApiNbpPlClient apiNbpPlClient;
+    private final PdfService pdfService;
+    private final RentalMapper rentalMapper;
 
     public Rental createRental(CreateRentalDto createRentalDto, CurrencyCode currencyCode) throws EquipmentNotFoundException, EquipmentNotAvailableException, TierNotAvailableException, RenterNotFoundException, ExchangeRateNotAvailableException {
         Equipment equipment = equipmentRepository.findById(createRentalDto.getEquipmentId())
@@ -69,8 +74,8 @@ public class RentalService {
         BigDecimal totalPriceInPln = equipmentPrice.getPrice().multiply(new BigDecimal(rentalTierQuantity));
 
         if (currencyCode.equals(CurrencyCode.EUR)) {
-           return totalPriceInPln.divide(BigDecimal.valueOf(apiNbpPlClient.getEuroExchangeRate().getRates().get(0).getAverageExchangeRate()), 4, RoundingMode.HALF_UP);
-       }
+            return totalPriceInPln.divide(BigDecimal.valueOf(apiNbpPlClient.getEuroExchangeRate().getRates().get(0).getAverageExchangeRate()), 4, RoundingMode.HALF_UP);
+        }
 
         return totalPriceInPln;
     }
@@ -114,5 +119,14 @@ public class RentalService {
     public Rental getRentalByRenterIdAndRentalId(Long renterId, Long rentalId) throws RenterNotFoundException, RentalNotFoundException {
         return getRentalsByRenterId(renterId).stream()
                 .filter(r -> r.getId().equals(rentalId)).findAny().orElseThrow(() -> new RentalNotFoundException(rentalId));
+    }
+
+    public Rental getRentalById(Long rentalId) throws RentalNotFoundException {
+        return rentalRepository.findById(rentalId).orElseThrow(() -> new RentalNotFoundException(rentalId));
+    }
+
+    public byte[] generateInvoiceForRental(Long rentalId) throws RentalNotFoundException, IOException {
+        return pdfService.generatePdfInvoice(
+                rentalMapper.mapRentalToInvoice(getRentalById(rentalId)));
     }
 }

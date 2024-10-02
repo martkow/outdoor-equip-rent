@@ -1,6 +1,7 @@
 package com.kodilla.outdoor.equiprent.mapper;
 
 import com.kodilla.outdoor.equiprent.domain.Rental;
+import com.kodilla.outdoor.equiprent.dto.Invoice;
 import com.kodilla.outdoor.equiprent.dto.RentalDto;
 import org.springframework.stereotype.Component;
 
@@ -25,5 +26,17 @@ public class RentalMapper {
        return rentals.stream()
                .map(this::mapRentalToRentalDto)
                .toList();
+   }
+
+   public Invoice mapRentalToInvoice(Rental rental) {
+       return Invoice.builder()
+               .rentalStartDate(rental.getRentalStart())
+               .rentalEndDate(rental.getRentalEnd())
+               .creationDate(rental.getCreationDate())
+               .renter(rental.getRenter())
+               .equipment(rental.getEquipment())
+               .totalPrice(rental.getTotalPrice())
+               .currencyCode(rental.getCurrencyCode())
+               .build();
    }
 }

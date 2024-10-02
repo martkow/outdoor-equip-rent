@@ -127,4 +127,11 @@ public class GlobalHttpErrorHandler extends ResponseEntityExceptionHandler {
     public Error handleCurrencyCodeNotFoundException(CurrencyCodeNotFoundException ccnae) {
         return new Error("ERROR", "currency.code.does.not.exist", "Currency code " + ccnae.getCurrencyCode() + " not found.");
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    @ExceptionHandler(InvoiceDownloadNotAvailableException.class)
+    public Error handleInvoiceDownloadNotAvailableException(InvoiceDownloadNotAvailableException idnae) {
+        return new Error("ERROR", "invoice.download.not.available", "Invoice for rental with ID " + idnae.getRentalId() + " currently not available to download.");
+    }
 }

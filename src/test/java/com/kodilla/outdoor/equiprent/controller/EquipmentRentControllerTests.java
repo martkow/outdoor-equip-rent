@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -186,8 +187,8 @@ public class EquipmentRentControllerTests {
         String jsonContent = gson.toJson(createRentalDto);
         // When & Then
         mockMvc.perform(MockMvcRequestBuilders.post("/api/rentals")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .characterEncoding("UTF-8")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
                         .content(jsonContent)
                 )
                 .andExpect(MockMvcResultMatchers.status().is(400))
@@ -308,6 +309,46 @@ public class EquipmentRentControllerTests {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.description", Matchers.is("Rental status INVALID_STATUS not found.")));
     }
 
+    @DisplayName("Test case for fetching a rental by its ID")
+    @Test
+    void shouldFetchRental() throws Exception {
+        // Given
+        Renter renter = new Renter(1L, "Bubuslaw", "Bubuslawski", "bubuslaw@test.pl", "000000000", "Bubuslawska 1", LocalDateTime.of(2024, 9, 24, 14, 0, 0), null);
+        Equipment equipment = new Equipment(1L, "Tent Plus", "Camping tent", EquipmentCategory.TENT, null, null, LocalDateTime.of(2024, 9, 21, 15, 0, 0));
+        Rental rental = new Rental(1L, equipment, renter, LocalDateTime.of(2024, 9, 21, 12, 0, 0), LocalDateTime.of(2024, 9, 21, 15, 0, 0), null, RentalStatus.ACTIVE, new BigDecimal("211.11"), CurrencyCode.PLN, LocalDateTime.of(2024, 9, 21, 15, 0, 0), null);
+        RentalDto rentalDto = new RentalDto(1L, 1L, 1L, "2023-09-21T12:00:00", "2023-09-21T15:00:00", "ACTIVE", new BigDecimal("211.11"), "PLN");
+
+        Mockito.when(rentalService.getRentalById(Mockito.anyLong())).thenReturn(rental);
+        Mockito.when(rentalMapper.mapRentalToRentalDto(rental)).thenReturn(rentalDto);
+        // When & Then
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/rentals/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.equipmentId", Matchers.is(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.renterId", Matchers.is(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.rentalStart", Matchers.is("2023-09-21T12:00:00")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.rentalEnd", Matchers.is("2023-09-21T15:00:00")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status", Matchers.is("ACTIVE")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalPrice", Matchers.is(211.11)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.currencyCode", Matchers.is("PLN")));
+    }
+
+    @DisplayName("Test case for handling RentalNotFoundException when retrieving rental by ID")
+    @Test
+    void shouldHandleRentalNotFoundExceptionWhenGettingRentalById() throws Exception {
+        // Given
+        Mockito.when(rentalService.getRentalById(Mockito.anyLong())).thenThrow(new RentalNotFoundException(1L));
+        // When & Then
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/rentals/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().is(400))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.level", Matchers.is("ERROR")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is("rental.does.not.exist")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.description", Matchers.is("Rental with ID 1 not found.")));
+    }
+
+
     @DisplayName("Should update rental status to COMPLETED")
     @Test
     void shouldUpdateRentalStatusToCompleted() throws Exception {
@@ -377,5 +418,38 @@ public class EquipmentRentControllerTests {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.level", Matchers.is("ERROR")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is("rental.status.does.not.exist")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.description", Matchers.is("Rental status NOT_EXIST_STATUS not found.")));
+    }
+
+    @DisplayName("Test case for downloading invoice successfully")
+    @Test
+    void shouldDownloadInvoiceSuccessfully() throws Exception {
+        // Given
+        Long rentalId = 1L;
+        byte[] pdfInvoice = "Pdf content".getBytes(StandardCharsets.UTF_8);
+
+        Mockito.when(rentalService.generateInvoiceForRental(rentalId)).thenReturn(pdfInvoice);
+        // When & Then
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/rentals/1/invoice")
+                        .accept(MediaType.APPLICATION_PDF))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.header().string("Content-Disposition", "attachment; filename=invoice_" + rentalId + ".pdf"))
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_PDF))
+                .andExpect(MockMvcResultMatchers.content().bytes(pdfInvoice));
+    }
+
+    @DisplayName("Test case for RentalNotFoundException")
+    @Test
+    void shouldHandleRentalNotFoundExceptionWhenDownloadingInvoiceForNotFoundRental() throws Exception {
+        // Given
+        Long rentalId = 1L;
+        Mockito.when(rentalService.generateInvoiceForRental(rentalId)).thenThrow(new RentalNotFoundException(rentalId));
+        // When & Then
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/rentals/1/invoice")
+                        .accept(MediaType.APPLICATION_PDF))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.level", Matchers.is("ERROR")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is("rental.does.not.exist")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.description", Matchers.is("Rental with ID 1 not found.")));
     }
 }

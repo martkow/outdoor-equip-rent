@@ -160,7 +160,7 @@ public class RenterController {
 
     @Operation(
             description = "Get a specific rental by renter ID and rental ID",
-            summary = "Get rental by renter and rental ID"
+            summary = "Get rental by renter and rental IDs"
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",

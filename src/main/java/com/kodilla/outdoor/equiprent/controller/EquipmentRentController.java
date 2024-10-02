@@ -20,6 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -98,6 +99,34 @@ public class EquipmentRentController {
     }
 
     @Operation(
+            description = "Retrieves a specific rental by its ID",
+            summary = "Get a rental"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Rental retrieved successfully",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = RentalDto.class)
+                    )),
+            @ApiResponse(responseCode = "400",
+            description = "Rental with ID {rentalId} not found.",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = GlobalHttpErrorHandler.Error.class)
+            )),
+    })
+    @GetMapping("/{rentalId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<RentalDto> getRentalById(
+            @Parameter(description = "ID of the rental", example = "1")
+            @PathVariable Long rentalId) throws RentalNotFoundException {
+        return ResponseEntity.ok(rentalMapper.mapRentalToRentalDto(
+                rentalService.getRentalById(rentalId)
+        ));
+    }
+
+    @Operation(
             description = "Updates rental status",
             summary = "Update rental status"
     )
@@ -133,5 +162,49 @@ public class EquipmentRentController {
                         rentalId,
                         filterMapper.mapToStatusOrThrow(status))
         ));
+    }
+
+    @Operation(
+            description = "Download invoice for a rental in PDF format",
+            summary = "Download rental invoice"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Invoice downloaded successfully",
+                    content = @Content(
+                            mediaType = "application/pdf"
+                    )
+            ),
+            @ApiResponse(responseCode = "400",
+                    description = "Rental with ID {rentalId} not found",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = GlobalHttpErrorHandler.Error.class)
+                    )
+            )
+    })
+    @GetMapping(value = "/{rentalId}/invoice", produces = {MediaType.APPLICATION_PDF_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<?> downloadInvoiceForRental(
+            @Parameter(description = "ID of the rental", example = "1")
+            @PathVariable Long rentalId) {
+        try {
+            byte[] pdfInvoice = rentalService.generateInvoiceForRental(rentalId);
+
+            return ResponseEntity.ok()
+                    .header("Content-Disposition", "attachment; filename=invoice_" + rentalId + ".pdf")
+                    .body(pdfInvoice);
+        } catch (Exception e) {
+            if (e instanceof RentalNotFoundException) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(new GlobalHttpErrorHandler.Error("ERROR", "rental.does.not.exist", "Rental with ID " + ((RentalNotFoundException) e).getRentalId() + " not found."));
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(new GlobalHttpErrorHandler.Error("ERROR", "invoice.download.not.available", "Invoice for rental with ID " + ((InvoiceDownloadNotAvailableException) e).getRentalId() + " currently not available to download."));
+
+            }
+        }
     }
 }
