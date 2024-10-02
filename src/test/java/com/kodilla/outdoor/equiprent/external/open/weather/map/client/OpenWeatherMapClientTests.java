@@ -1,8 +1,7 @@
-package com.kodilla.outdoor.equiprent.open.weather.map.client;
+package com.kodilla.outdoor.equiprent.external.open.weather.map.client;
 
 import com.kodilla.outdoor.equiprent.exception.WeatherForecastNotAvailableException;
 import com.kodilla.outdoor.equiprent.dto.WeatherMapDto;
-import com.kodilla.outdoor.equiprent.external.open.weather.map.client.OpenWeatherMapClient;
 import com.kodilla.outdoor.equiprent.external.open.weather.map.config.OpenWeatherMapConfig;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

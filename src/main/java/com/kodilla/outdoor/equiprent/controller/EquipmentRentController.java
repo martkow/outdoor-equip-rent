@@ -93,7 +93,7 @@ public class EquipmentRentController {
             @RequestParam Optional<String> status) throws RentalStatusNotFoundException {
         return ResponseEntity.ok(rentalMapper.mapRentalListToRentalDtoList(
                 rentalService.getRentalByStatuses(
-                    filterMapper.mapStringToRentalStatusList(status)
+                        filterMapper.mapStringToRentalStatusList(status)
                 )
         ));
     }
@@ -110,11 +110,11 @@ public class EquipmentRentController {
                             schema = @Schema(implementation = RentalDto.class)
                     )),
             @ApiResponse(responseCode = "400",
-            description = "Rental with ID {rentalId} not found.",
-            content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = GlobalHttpErrorHandler.Error.class)
-            )),
+                    description = "Rental with ID {rentalId} not found.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = GlobalHttpErrorHandler.Error.class)
+                    )),
     })
     @GetMapping("/{rentalId}")
     @ResponseStatus(HttpStatus.OK)

@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -451,5 +452,20 @@ public class EquipmentRentControllerTests {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.level", Matchers.is("ERROR")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is("rental.does.not.exist")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.description", Matchers.is("Rental with ID 1 not found.")));
+    }
+
+    @DisplayName("Test case for InvoiceDownloadNotAvailableException")
+    @Test
+    void shouldHandleInvoiceDownloadNotAvailableExceptionWhenDownloadingInvoice() throws Exception {
+        // Given
+        Long rentalId = 1L;
+        Mockito.when(rentalService.generateInvoiceForRental(rentalId)).thenThrow(new InvoiceDownloadNotAvailableException(1L));
+        // When & Then
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/rentals/1/invoice"))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.level", Matchers.is("ERROR")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is("invoice.download.not.available")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.description", Matchers.is("Invoice for rental with ID 1 currently not available to download.")));
     }
 }

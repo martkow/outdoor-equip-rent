@@ -22,13 +22,11 @@ public class RenterMapper {
 
     public Renter mapCreateUpdateRenterDtoToRenter(CreateUpdateRenterDto createUpdateRenterDto) {
         return Renter.builder()
-                .id(null)
                 .firstName(createUpdateRenterDto.getFirstName())
                 .lastName(createUpdateRenterDto.getLastName())
                 .email(createUpdateRenterDto.getEmail())
                 .phoneNumber(createUpdateRenterDto.getPhoneNumber())
                 .address(createUpdateRenterDto.getAddress())
-                .creationDate(null)
                 .build();
     }
 

@@ -1,6 +1,5 @@
-package com.kodilla.outdoor.equiprent.open.weather.map.client.interceptor.logging;
+package com.kodilla.outdoor.equiprent.external.interceptor.logging;
 
-import com.kodilla.outdoor.equiprent.external.interceptor.logging.LoggingClientHttpRequestInterceptor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

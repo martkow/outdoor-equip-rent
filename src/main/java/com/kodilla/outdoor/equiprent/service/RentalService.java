@@ -125,8 +125,12 @@ public class RentalService {
         return rentalRepository.findById(rentalId).orElseThrow(() -> new RentalNotFoundException(rentalId));
     }
 
-    public byte[] generateInvoiceForRental(Long rentalId) throws RentalNotFoundException, IOException {
-        return pdfService.generatePdfInvoice(
-                rentalMapper.mapRentalToInvoice(getRentalById(rentalId)));
+    public byte[] generateInvoiceForRental(Long rentalId) throws RentalNotFoundException, InvoiceDownloadNotAvailableException {
+        try {
+            return pdfService.generatePdfInvoice(
+                    rentalMapper.mapRentalToInvoice(getRentalById(rentalId)));
+        } catch (IOException ioe) {
+            throw new InvoiceDownloadNotAvailableException(rentalId);
+        }
     }
 }
