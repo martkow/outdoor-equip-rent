@@ -91,6 +91,9 @@ public class PdfService {
                 contentStream.newLine();
                 contentStream.showText(Invoice.TOTAL + ": " + invoice.getTotalPrice() + " " + invoice.getCurrencyCode());
                 contentStream.newLine();
+                contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 9);
+                contentStream.newLine();
+                contentStream.showText(Invoice.GENERATION_DATE + ": " + invoice.getCreationDate());
                 contentStream.endText();
             }
 

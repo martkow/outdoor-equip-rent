@@ -127,8 +127,9 @@ public class RentalService {
 
     public byte[] generateInvoiceForRental(Long rentalId) throws RentalNotFoundException, InvoiceDownloadNotAvailableException {
         try {
-            return pdfService.generatePdfInvoice(
-                    rentalMapper.mapRentalToInvoice(getRentalById(rentalId)));
+            Invoice invoice = rentalMapper.mapRentalToInvoice(getRentalById(rentalId));
+            invoice.setCreationDate(LocalDateTime.now());
+            return pdfService.generatePdfInvoice(invoice);
         } catch (IOException ioe) {
             throw new InvoiceDownloadNotAvailableException(rentalId);
         }

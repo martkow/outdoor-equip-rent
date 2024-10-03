@@ -70,7 +70,6 @@ public class RentalMapperTests {
         Assertions.assertNotNull(result);
         Assertions.assertEquals(rental.getRentalStart(), result.getRentalStartDate());
         Assertions.assertEquals(rental.getRentalEnd(), result.getRentalEndDate());
-        Assertions.assertEquals(rental.getCreationDate(), result.getCreationDate());
         Assertions.assertEquals(renter, result.getRenter());
         Assertions.assertEquals(equipment, result.getEquipment());
         Assertions.assertEquals(rental.getTotalPrice(), result.getTotalPrice());

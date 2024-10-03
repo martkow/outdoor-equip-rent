@@ -6,12 +6,14 @@ import com.kodilla.outdoor.equiprent.domain.Renter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @Getter
+@Setter
 @Builder
 public class Invoice {
     public static final String INVOICE_TITLE = "INVOICE FOR RENTAL";
@@ -20,6 +22,7 @@ public class Invoice {
     public static final String RENTER_DETAILS = "Renter details";
     public static final String RENTED_EQUIPMENT_DETAILS = "Rented equipment details";
     public static final String TOTAL = "TOTAL";
+    public static final String GENERATION_DATE = "Generated";
 
     private LocalDateTime rentalStartDate;
     private LocalDateTime rentalEndDate;

@@ -32,7 +32,6 @@ public class RentalMapper {
        return Invoice.builder()
                .rentalStartDate(rental.getRentalStart())
                .rentalEndDate(rental.getRentalEnd())
-               .creationDate(rental.getCreationDate())
                .renter(rental.getRenter())
                .equipment(rental.getEquipment())
                .totalPrice(rental.getTotalPrice())
